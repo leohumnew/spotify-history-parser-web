@@ -1,0 +1,98 @@
+body {
+    background-color: #000;
+    color: #ffffff;
+}
+
+ul {
+    padding-left: 0;
+}
+
+li {
+    padding: 5px;
+    color: #ffffff;
+}
+
+li:nth-of-type(odd) {
+    background-color: rgb(48, 49, 48);
+}
+
+h2 {
+    font-size: 1.3vw;
+}
+
+h3 {
+    font-size: 1vw;
+}
+
+.button {
+    padding: 0.5vw 0.5rem;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: rgb(30, 215, 96);
+    font-size: 0.8vw;
+    font-weight: bold;
+    color: #000;
+}
+
+.button:hover {
+    background-color: rgb(20, 190, 80);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.section {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    background-color: #242424;
+    margin: 2rem;
+    border-radius:5px;
+}
+
+.section:hover {
+    background-color: #282828;
+    transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+}
+
+.green {
+    color:rgb(30, 215, 96);
+}
+
+.barChart {
+    margin-right:15px;
+    display:grid;
+    align-items: end;
+    grid-template-columns: repeat(24, 1fr);
+}
+
+.bar {
+    margin:0.2vw;
+    border-top-left-radius:4px;
+    border-top-right-radius:4px;
+    background-color: #ffffff;
+}
+
+#header {
+    padding-top:0.5rem;
+    padding-bottom: 3.5rem;
+    margin: 2rem;
+    border-radius:5px;
+    background-color: #242424;
+    font-size: 1.2vw;
+    color:rgb(30, 215, 96);
+}
+
+#timeDistribution {
+    border-left:2px solid white;
+    border-bottom:2px solid white;
+    height:200px;
+}

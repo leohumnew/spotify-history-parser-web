@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title>Spotify History Analyzer</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="Free Spotify history parser">
+      <meta name="keywords" content="Spotify, History, Music, Stats">
+      <meta name="author" content="Leo">
+      <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div id="header" class="center">
+          <h1>Spotify History Analyzer</h1>
+          <label class="button" for="upload">Choose File</label>
+          <input id="upload" onchange="readFile(this)" type="file">
+        </div>
+
+        <div class="container">
+          <div class="section">
+            <h2 class="green">Most Listened To</h2>
+            <ul id="songList"></ul>
+          </div>
+          <div class="section">
+            <h2 class="green">Stats</h2>
+            <h3 id="listenTime"></h3>
+            <div id="timeDistribution" class="barChart"></div>
+            <div id="timeDistributionText" class="barChart"></div>
+          </div>
+        </div>
+
+
+        <script>
+          function readFile(input) {
+              let file = input.files[0];
+              let fileReader = new FileReader();
+              fileReader.readAsText(file);
+              fileReader.onload = function() {
+                analyzeFile(fileReader.result);
+              };
+              fileReader.onerror = function() {
+                alert(fileReader.error);
+              };
+          }
+
+          function analyzeFile(contents) {
+                const songList = document.getElementById("songList");
+                const listenTimeText = document.getElementById("listenTime");
+                const timeDistributionChart = document.getElementById("timeDistribution");
+                const timeDistributionText = document.getElementById("timeDistributionText");
+
+                let totalTime = 0;
+                let timeDistribution = new Array(24).fill(0);
+
+                let contentArray = null;
+                try {
+                 contentArray = JSON.parse(contents);
+                } catch (err) {
+                  console.log('invalid JSON provided');
+                }
+
+                // Loop through all songs in file and save them to an object
+                let playedSongs = {};
+                contentArray.forEach(song => {
+                    totalTime += song["msPlayed"];
+                    timeDistribution[parseInt(song["endTime"].substring(11,13))] += Math.round(song["msPlayed"]/1000);
+                    if (song["msPlayed"] > 4000) {
+                        playedSongs[song["trackName"]] = (playedSongs[song["trackName"]] || 0) + 1;
+                    }
+                });
+
+                // Create array of songs sorted by number of times listened to
+                let sortable = [];
+                for (let song in playedSongs) {
+                  sortable.push([song, playedSongs[song]]);
+                }
+                sortable.sort(function(a, b) {
+                  return b[1] - a[1];
+                });
+
+                // Loop through sorted array and add top # to unordered list
+                for (let i = 0; i < 20; i++) {
+                  let node = document.createElement('li');
+                  node.innerHTML = sortable[i][0] + ": " + sortable[i][1];
+                  //node.appendChild(document.createTextNode(sortable[i][0] + ": " + sortable[i][1]));
+                  songList.appendChild(node);
+                }
+
+                // Stats
+                listenTimeText.innerHTML = "Total listen time: " + Math.round(totalTime/60000) + " min / " + Math.round(totalTime/60000/60) + " hours";
+
+                // Set up time distribution graph
+                let maxTimeInHour = 0;
+                for (let i = 0; i < 24; i++) {
+                  if(timeDistribution[i] > maxTimeInHour) maxTimeInHour = timeDistribution[i];
+                }
+                for (let i = 0; i < 24; i++) {
+                  timeDistributionChart.innerHTML += "<div class='bar' style='height:" + Math.round(timeDistribution[i] * 180 / maxTimeInHour) +"px'></div>"
+                }
+                for (let i = 0; i < 24; i++) {
+                  timeDistributionText.innerHTML += "<div> " + i + "</div>"
+                }
+          }
+        </script>
+    </body>
+</html>
