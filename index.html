@@ -11,8 +11,12 @@
     <body>
         <div id="header" class="center">
           <h1>Spotify History Analyzer</h1>
-          <label class="button" for="upload">Choose File</label>
+          <label class="button" for="upload">Select File</label>
           <input id="upload" onchange="readFile(this)" type="file">
+        </div>
+        <div class="section" id="explanationText">
+          <h3>Click on <i>Select File</i> above, and select the <i>"StreamingHistory0.json"</i>  file from your Spotify data download.</h3>
+          <h4>If you have not yet downloaded it:<br> 1. Go to the Spotify website and log in<br> 2. Go to account settings, then privacy options<br> 3. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days.</h4>
         </div>
 
         <div id="fileResults">
@@ -41,9 +45,16 @@
             <div class="section">
               <h2 class="green">Stats</h2>
               <h3 id="listenTime"></h3>
+
+              <h3 style="margin-bottom:4px;">Listen time distribution by hour:</h3>
               <div id="timeDistribution" class="barChart"></div>
-              <div id="timeDistributionText" class="barChart" style='text-align:center'>
+              <div class="barChart" style='text-align:center'>
                 <p>00</p><p>01</p><p>02</p><p>03</p><p>04</p><p>05</p><p>06</p><p>07</p><p>08</p><p>09</p><p>10</p><p>11</p><p>12</p><p>13</p><p>14</p><p>15</p><p>16</p><p>17</p><p>18</p><p>19</p><p>20</p><p>21</p><p>22</p><p>23</p>
+              </div>
+
+              <h3 style="margin-bottom:4px;">Listen time distribution by date:</h3>
+              <div id="dateDistribution" class="lineChart"></div>
+              <div id="dateDistributionLabels" class="lineChart" style='text-align:center; --month-count:15'>
               </div>
             </div>
           </div>

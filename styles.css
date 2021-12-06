@@ -1,6 +1,13 @@
+@font-face {
+  font-family: 'Montserrat Regular';
+  src: url(Montserrat-Regular.ttf) format('truetype');
+  font-display: swap;
+}
+
 body {
     background-color: #000;
     color: #ffffff;
+    font-family: "Montserrat Regular", Arial;
 }
 
 h1 {
@@ -95,6 +102,32 @@ input[type="file"] {
     background-color: #ffffff;
 }
 
+.lineChart {
+    margin-right: 15px;
+    display: grid;
+    grid-template-columns: repeat(var(--month-count), 1fr);
+}
+
+.point {
+    width: 10px;
+    height: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius:50%;
+    background-color: #ffffff;
+}
+
+.point-line {
+    height: 1px;
+    width: calc(var(--hyp) * 1px);
+    position: absolute;
+    left: 50%;
+    margin-top: -5px;
+    transform: rotate(calc(var(--angle) * 1deg));
+    transform-origin: left bottom;
+    background-color: #ffffff;
+}
+
 .itemBox {
     text-align: center;
 }
@@ -128,9 +161,11 @@ input[type="file"] {
 
 #topSongImage {
     width: 12em;
+    border-radius: 7px;
 }
 #topArtistImage {
     width: 12em;
+    border-radius: 7px;
 }
 
 #imageContainer {
@@ -153,8 +188,14 @@ input[type="file"] {
     height:200px;
 }
 
+#dateDistribution {
+    border-left:2px solid white;
+    border-bottom:2px solid white;
+    height:200px;
+}
+
 #fileResults {
-    visibility: visible;
+    visibility: hidden;
 }
 
 #spotifyLogo {
