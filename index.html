@@ -16,7 +16,8 @@
         </div>
         <div class="section" id="explanationText">
           <h3>Click on <i>Select File</i> above, and select the <i>"StreamingHistory0.json"</i>  file from your Spotify data download.</h3>
-          <h4>If you have not yet downloaded it:<br> 1. Go to the Spotify website and log in<br> 2. Go to account settings, then privacy options<br> 3. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days.</h4>
+          <h4>If you have not yet downloaded it:<br> 1. Go to the Spotify website and log in<br> 2. Go to account settings, then privacy options<br> 3. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days.<br><br></h4>
+          <h5>Internet Explorer and other outdated browsers are not supported.</h5>
         </div>
 
         <div id="fileResults">
@@ -25,12 +26,12 @@
             <div id="imageContainer">
               <div class="itemBox">
                 <h3>Top Song</h3>
-                <image id="topSongImage"></image>
+                <image id="topSongImage" src="images/def_song.jpg"></image>
                 <h3 id="topSong"></h3>
               </div>
               <div class="itemBox">
                 <h3>Top Artist</h3>
-                <image id="topArtistImage"></image>
+                <image id="topArtistImage" src="images/def_singer.jpg"></image>
                 <h3 id="topArtist"></h3>
               </div>
             </div>
@@ -61,12 +62,9 @@
         </div>
 
         <div>
-          <image src="spotifyLogo.png" id="spotifyLogo"></image>
+          <image src="images/spotifyLogo.png" id="spotifyLogo"></image>
           <h5>Track covers by Spotify</h5>
         </div>
-
-
-
 
         <script>
           function readFile(input) {

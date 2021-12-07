@@ -18,7 +18,10 @@ function analyzeFile(contents) {
     let songArray = [];
     let sortedSongIndecesArray = [];
     let repetitionArray = [];
+    let singerIndecesArray = [];
     let singerArray = [];
+    let singerTimeArray = [];
+    let sortedSingerIndecesArray = [];
 
     let totalTime = 0;
     let timeDistribution = new Array(24).fill(0);
@@ -32,7 +35,8 @@ function analyzeFile(contents) {
     }
 
     // Loop through all songs in file and save them to an object
-    contentArray.forEach(song => {
+    for (let i = 0; i < contentArray.length; i++) {
+        let song = contentArray[i];
         totalTime += song["msPlayed"];
         timeDistribution[parseInt(song["endTime"].substring(11,13))] += Math.round(song["msPlayed"]/1000);
 
@@ -42,25 +46,35 @@ function analyzeFile(contents) {
         }
         dateArrayTimes[dateArray.indexOf(song["endTime"].substring(0,7))] += Math.round(song["msPlayed"]/1000);
 
-        if (song["msPlayed"] > 2000) {
-            if (songArray.indexOf(song["trackName"]) > -1){
-                repetitionArray[songArray.indexOf(song["trackName"])] += 1;
-            } else {
-                songArray.push(song["trackName"]);
-                repetitionArray.push(1);
-                singerArray.push(song["artistName"]);
-            }
+        if (singerArray.indexOf(song["artistName"]) == -1) {
+            singerArray.push(song["artistName"]);
+            singerTimeArray.push(0);
         }
-    });
+
+        if (songArray.indexOf(song["trackName"]) == -1) {
+            songArray.push(song["trackName"]);
+            singerIndecesArray.push(singerArray.indexOf(song["artistName"]));
+            repetitionArray.push(0);
+        }
+
+        singerTimeArray[singerIndecesArray[songArray.indexOf(song["trackName"])]] += Math.round(song["msPlayed"]/1000);
+
+        if (song["msPlayed"] > 2000) {
+            repetitionArray[songArray.indexOf(song["trackName"])] += 1;
+        }
+    }
 
     // Populate array with song indeces sorted by number of times listened to
     sortedSongIndecesArray = Array.from(Array(repetitionArray.length).keys())
       .sort((a, b) => repetitionArray[b] - repetitionArray[a]);
 
+    sortedSingerIndecesArray = Array.from(Array(singerTimeArray.length).keys())
+      .sort((a, b) => singerTimeArray[b] - singerTimeArray[a]);
+
     // Loop through sorted array and add top # to unordered list
     for (let i = 0; i < 20; i++) {
         let node = document.createElement('li');
-        node.innerHTML = songArray[sortedSongIndecesArray[i]] + "  (<i>" + singerArray[sortedSongIndecesArray[i]] + "</i>) <span style='float: right;'><b>" + repetitionArray[sortedSongIndecesArray[i]] + "</b></span>";
+        node.innerHTML = songArray[sortedSongIndecesArray[i]] + "  (<i>" + singerArray[singerIndecesArray[sortedSongIndecesArray[i]]] + "</i>) <span style='float: right;'><b>" + repetitionArray[sortedSongIndecesArray[i]] + "</b></span>";
         songList.appendChild(node);
     }
 
@@ -89,62 +103,67 @@ function analyzeFile(contents) {
         let deg = Math.asin(((dateArrayTimes[i] - dateArrayTimes[i+1]) * dateDistributionChart.clientHeight / mostSeconds) / hyp) * (180 / Math.PI);
         dateDistributionChart.innerHTML += "<div style='position:relative;'> <div class='point' style='margin-top: "+ (dateDistributionChart.clientHeight-pointHeight) +"px'></div> <div class='point-line' style='--hyp:" + hyp + ";--angle:" + deg + "'></div> </div>"
     }
-    console.log(dateArrayTimes);
 
     // Overview
-    document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]];
-    document.getElementById("topArtist").innerHTML = singerArray[sortedSongIndecesArray[0]];
+    document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
+    document.getElementById("topArtist").innerHTML = singerArray[sortedSingerIndecesArray[0]] + "<br><span style='font-size:0.75em'>Listened to for " + Math.round(singerTimeArray[sortedSingerIndecesArray[0]]/60) + " minutes</span>";
 
-    let xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() {
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-            makeSearches(xmlHttp.response.access_token, songArray[sortedSongIndecesArray[0]], singerArray[sortedSongIndecesArray[0]]);
-        }
-    };
-    xmlHttp.open("POST", 'https://accounts.spotify.com/api/token', true);
-    xmlHttp.setRequestHeader("Authorization", 'Basic CLIENT_ID_AND_SECRET');
-    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
-    xmlHttp.withCredentials = true;
-    xmlHttp.responseType = 'json';
-    xmlHttp.send("grant_type=client_credentials");
+    getSpotifyCredentials(songArray[sortedSongIndecesArray[0]], singerArray[singerIndecesArray[sortedSongIndecesArray[0]]], singerArray[sortedSingerIndecesArray[0]]);
+
+    getWikipediaInformation(singerArray[sortedSingerIndecesArray[0]]);
 
     document.getElementById("explanationText").style.display = "none";
     document.getElementById("fileResults").style.visibility = "visible";
     loaded = true;
 }
 
-// Search images
-function makeSearches(t, topSong, topSongArtist) {
-    let xmlHttp2 = new XMLHttpRequest();
-    xmlHttp2.open("GET", "https://api.spotify.com/v1/search?q=track%3A"+topSong+"+artist%3A"+topSongArtist+"&type=track&limit=1", true);
-    xmlHttp2.onreadystatechange = function(e) {
-        if (xmlHttp2.readyState == 4) {
-            if (xmlHttp2.status == 200) {
-                let results = JSON.parse(xmlHttp2.response);
-                document.getElementById("topSongImage").src = results.tracks.items[0].album.images[1].url;
-            } else {
-                document.getElementById("topSongImage").src = "def_song.jpg";
-            }
-        }
-    };
-    xmlHttp2.setRequestHeader("Authorization", 'Bearer ' + t);
-    xmlHttp2.send();
-
-    let xmlHttp3 = new XMLHttpRequest();
-    xmlHttp3.open("GET", "https://api.spotify.com/v1/search?q=artist%3A"+topSongArtist+"&type=artist&limit=1", true);
-    xmlHttp3.onreadystatechange = function(e) {
-        if (xmlHttp3.readyState == 4) {
-            if (xmlHttp3.status == 200) {
-                let results = JSON.parse(xmlHttp3.response);
-                document.getElementById("topArtistImage").src = results.artists.items[0].images[1].url;
-            } else {
-                document.getElementById("topArtistImage").src = "def_singer.jpg";
-            }
-        }
-    };
-    xmlHttp3.setRequestHeader("Authorization", 'Bearer ' + t);
-    xmlHttp3.send();
+//Get Spotify credentials
+async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
+    let response = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+            "Authorization": 'Basic NzlkYzdhM2FjYzFkNDg2YTk3MjYyNTBhMzBjMDgwYzY6OGU3ZGM5NDFkN2VkNDQ3ZmIyZGJkNTg5ZjcwZjEyNTU=',
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+        },
+        body: "grant_type=client_credentials"
+    });
+    if(response.ok) {
+        let json = await response.json();
+        makeSearches(json.access_token, topSong, topSongArtist, topArtist);
+    }
 }
+
+// Search spotify images
+async function makeSearches(t, topSong, topSongArtist, topArtist) {
+    let response = await fetch("https://api.spotify.com/v1/search?q=track%3A"+topSong+"+artist%3A"+topSongArtist+"&type=track&limit=1", {
+        headers: {
+            "Authorization": 'Bearer ' + t
+        }
+    });
+    if(response.ok) {
+        let json = await response.json();
+        document.getElementById("topSongImage").src = json.tracks.items[0].album.images[1].url;
+    }
+
+    let response2 = await fetch("https://api.spotify.com/v1/search?q=artist%3A" + topArtist + "&type=artist&limit=1", {
+        headers: {
+            "Authorization": 'Bearer ' + t
+        }
+    });
+    if(response2.ok) {
+        let json = await response2.json();
+        document.getElementById("topArtistImage").src = json.artists.items[0].images[1].url;
+    }
+}
+
+async function getWikipediaInformation(artist) {
+    let response = await fetch("https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=" + artist + "&rvsection=0");
+    if(response.ok) {
+        let json = await response.json();
+        console.log(json);
+    }
+}
+
 
 // Recalculate time distribution by date chart when window size changed
 window.addEventListener('resize', function(event){

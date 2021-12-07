@@ -132,6 +132,13 @@ input[type="file"] {
     text-align: center;
 }
 
+@media only screen and (max-width: 1200px) {
+    p {
+        font-size: 0.7em;
+        margin: 3px 0;
+    }
+}
+
 @media only screen and (max-width: 760px) {
     h1 {
         font-size: 1.8em;
@@ -149,23 +156,22 @@ input[type="file"] {
         margin: 0.8rem;
         padding: 0.5rem 0.5rem 0.5rem 1rem;
     }
-
-}
-
-@media only screen and (max-width: 1200px) {
-    p {
-        font-size: 0.7em;
-        margin: 3px 0;
+    .container {
+        grid-template-columns: 1fr;
     }
 }
 
 #topSongImage {
     width: 12em;
+    height: 12em;
     border-radius: 7px;
+    object-fit: cover;
 }
 #topArtistImage {
     width: 12em;
+    height: 12em;
     border-radius: 7px;
+    object-fit: cover;
 }
 
 #imageContainer {
@@ -211,9 +217,11 @@ input[type="file"] {
     }
     #topSongImage {
         width: 8em;
+        height: 8em;
     }
     #topArtistImage {
         width: 8em;
+        height: 8em;
     }
     #imageContainer {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
