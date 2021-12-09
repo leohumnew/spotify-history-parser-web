@@ -92,7 +92,7 @@ input[type="file"] {
     margin-right:15px;
     display:grid;
     align-items: end;
-    grid-template-columns: repeat(24, 1fr);
+    grid-template-columns: repeat(var(--columns), 1fr);
 }
 
 .bar {
@@ -189,7 +189,11 @@ input[type="file"] {
 }
 
 #timeDistribution {
-    border-left:2px solid white;
+    border-bottom:2px solid white;
+    height:200px;
+}
+
+#ageDistribution {
     border-bottom:2px solid white;
     height:200px;
 }
@@ -202,6 +206,10 @@ input[type="file"] {
 
 #fileResults {
     visibility: hidden;
+}
+
+#warningLowData {
+    display: none;
 }
 
 #spotifyLogo {

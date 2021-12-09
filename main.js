@@ -90,6 +90,21 @@ function analyzeFile(contents) {
         timeDistributionChart.innerHTML += "<div class='bar' style='height:" + Math.round(timeDistribution[i] * 180 / maxTimeInHour) +"px'></div>";
     }
 
+
+
+    // Overview
+    document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
+    document.getElementById("topArtist").innerHTML = singerArray[sortedSingerIndecesArray[0]] + "<br><span style='font-size:0.75em'>Listened to for " + Math.round(singerTimeArray[sortedSingerIndecesArray[0]]/60) + " minutes</span>";
+
+    getSpotifyCredentials(songArray[sortedSongIndecesArray[0]], singerArray[singerIndecesArray[sortedSongIndecesArray[0]]], singerArray[sortedSingerIndecesArray[0]]);
+
+    getWikipediaInformation(singerArray[sortedSingerIndecesArray[0]], singerArray, sortedSingerIndecesArray);
+
+
+    document.getElementById("explanationText").style.display = "none";
+    document.getElementById("fileResults").style.visibility = "visible";
+    document.getElementById("fileResults").style.display = "";
+
     // Set up date distribution graph
     dateDistributionLabels.style.setProperty("--month-count", dateArray.length);
     dateDistributionChart.style.setProperty("--month-count", dateArray.length);
@@ -104,16 +119,6 @@ function analyzeFile(contents) {
         dateDistributionChart.innerHTML += "<div style='position:relative;'> <div class='point' style='margin-top: "+ (dateDistributionChart.clientHeight-pointHeight) +"px'></div> <div class='point-line' style='--hyp:" + hyp + ";--angle:" + deg + "'></div> </div>"
     }
 
-    // Overview
-    document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
-    document.getElementById("topArtist").innerHTML = singerArray[sortedSingerIndecesArray[0]] + "<br><span style='font-size:0.75em'>Listened to for " + Math.round(singerTimeArray[sortedSingerIndecesArray[0]]/60) + " minutes</span>";
-
-    getSpotifyCredentials(songArray[sortedSongIndecesArray[0]], singerArray[singerIndecesArray[sortedSongIndecesArray[0]]], singerArray[sortedSingerIndecesArray[0]]);
-
-    getWikipediaInformation(singerArray[sortedSingerIndecesArray[0]]);
-
-    document.getElementById("explanationText").style.display = "none";
-    document.getElementById("fileResults").style.visibility = "visible";
     loaded = true;
 }
 
@@ -122,7 +127,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
     let response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
-            "Authorization": 'Basic NzlkYzdhM2FjYzFkNDg2YTk3MjYyNTBhMzBjMDgwYzY6OGU3ZGM5NDFkN2VkNDQ3ZmIyZGJkNTg5ZjcwZjEyNTU=',
+            "Authorization": 'Basic AUTHORIZATION',
             "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         },
         body: "grant_type=client_credentials"
@@ -156,11 +161,95 @@ async function makeSearches(t, topSong, topSongArtist, topArtist) {
     }
 }
 
-async function getWikipediaInformation(artist) {
-    let response = await fetch("https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=" + artist + "&rvsection=0");
-    if(response.ok) {
-        let json = await response.json();
-        console.log(json);
+async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesArray) {
+    /*let response = await fetch("https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&sites=enwiki&titles=Sia&normalize=true&props=claims&origin=*");
+    let json = await response.json();
+    console.log(json);*/
+
+    const countryList = document.getElementById("artistOriginList");
+    const ageDistributionChart = document.getElementById("ageDistribution");
+    while(ageDistributionChart.firstChild) ageDistributionChart.removeChild(ageDistributionChart.firstChild);
+    while(countryList.firstChild) countryList.removeChild(countryList.firstChild);
+
+    const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF"];
+    const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)"];
+    const alwaysLowercase = ["and", "at", "the", "of"];
+
+    let queryString = "SELECT ?page ?birth ?locLabel WHERE{VALUES ?page{";
+    for (let i = 0; i < 50; i++) {
+        if(errorCorrectionBefore.indexOf(singerArray[sortedSingerIndecesArray[i]]) != -1) {
+            queryString += '"' + errorCorrectionAfter[errorCorrectionBefore.indexOf(singerArray[sortedSingerIndecesArray[i]])] + '"@en';
+        } else {
+            const words = singerArray[sortedSingerIndecesArray[i]].split(" ");
+            for (let i = 0; i < words.length; i++) {
+                if(alwaysLowercase.indexOf(words[i].toLowerCase()) == -1 || i == 0) {
+                    if(words[i].toUpperCase() === words[i]) words[i] = words[i][0].toUpperCase() + words[i].substr(1).toLowerCase();
+                    else words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+                } else words[i] = words[i].toLowerCase();
+            }
+            queryString += '"' + words.join(" ") + '"@en';
+        }
+    }
+    queryString += '}?sitelink schema:name ?page;schema:isPartOf <https://en.wikipedia.org/>;schema:about ?item.OPTIONAL{?item wdt:P27 ?loc.}OPTIONAL{?item wdt:P495 ?loc.}OPTIONAL{?item wdt:P569 ?birth.}OPTIONAL{?item wdt:P527 ?members. ?members wdt:P569 ?birth.}SERVICE wikibase:label{bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".}}';
+    let response = await fetch("https://query.wikidata.org/sparql?query=" + queryString + "&format=json&origin=*", {
+        headers: {
+            'User-Agent': 'SpotifyHistoryAnalyzer/0.8 (CONTACT_INFO)'
+        }
+    });
+    let json = await response.json();
+    let artistInfo = json.results.bindings;
+    let countries = [];
+    let countryCount = [];
+    // <20, 20-29, 30-39, 40-49, >49
+    let ageCount = [0,0,0,0,0];
+    let ageExtremesNames = ["",""];
+    let ageExtremes = [0,0];
+
+    if(artistInfo.length < 25)document.getElementById("warningLowData").style.display = "block";
+
+    for(let i = 0; i < artistInfo.length; i++) {
+        try{
+            if(countries.indexOf(artistInfo[i].locLabel.value) == -1) {
+                countries.push(artistInfo[i].locLabel.value);
+                countryCount.push(1);
+            } else {
+                countryCount[countries.indexOf(artistInfo[i].locLabel.value)] += 1;
+            }
+            let age = Math.floor((new Date() - new Date(artistInfo[i].birth.value.substring(0,10))) / 31557600000);
+            if(age < ageExtremes[0] || i == 0){
+                ageExtremes[0] = age;
+                ageExtremesNames[0] = artistInfo[i].page.value;
+            }
+            if(age > ageExtremes[1]){
+                ageExtremes[1] = age;
+                ageExtremesNames[1] = artistInfo[i].page.value;
+            }
+            if(age < 20) ageCount[0]++;
+            else if(age < 30) ageCount[1]++;
+            else if(age < 40) ageCount[2]++;
+            else if(age < 50) ageCount[3]++;
+            else  ageCount[4]++;
+        } catch(err) {
+            console.log("Missing age or birthplace for artist");
+        }
+    }
+    document.getElementById("youngestText").innerHTML = "Youngest Artist: " + ageExtremesNames[0] + " (" + ageExtremes[0] + ")";
+    document.getElementById("oldestText").innerHTML = "Oldest Artist: " + ageExtremesNames[1] + " (" + ageExtremes[1] + ")";
+
+    // Make country list
+    let sortedCountriesIndeces = Array.from(Array(countryCount.length).keys())
+      .sort((a, b) => countryCount[b] - countryCount[a]);
+    for(let i = 0; i < 7 && i < sortedCountriesIndeces.length; i++){
+        countryList.innerHTML += "<li>" + countries[sortedCountriesIndeces[i]] + "<span style='float: right;'><b>" + countryCount[sortedCountriesIndeces[i]] + "</b></span></li>";
+    }
+
+    // Make age chart
+    let maxAgeCount = 0;
+    for (let i = 0; i < 5; i++) {
+        if(ageCount[i] > maxAgeCount) maxAgeCount = ageCount[i];
+    }
+    for (let i = 0; i < 5; i++) {
+        ageDistributionChart.innerHTML += "<div class='bar' style='height:" + Math.round(ageCount[i] * 180 / maxAgeCount) +"px'></div>";
     }
 }
 

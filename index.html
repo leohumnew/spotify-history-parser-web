@@ -1,3 +1,5 @@
+<!-- Written by Leo https://github.com/Hubbit200 -->
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -48,8 +50,8 @@
               <h3 id="listenTime"></h3>
 
               <h3 style="margin-bottom:4px;">Listen time distribution by hour:</h3>
-              <div id="timeDistribution" class="barChart"></div>
-              <div class="barChart" style='text-align:center'>
+              <div id="timeDistribution" style="--columns:24" class="barChart"></div>
+              <div class="barChart" style='text-align:center;--columns:24'>
                 <p>00</p><p>01</p><p>02</p><p>03</p><p>04</p><p>05</p><p>06</p><p>07</p><p>08</p><p>09</p><p>10</p><p>11</p><p>12</p><p>13</p><p>14</p><p>15</p><p>16</p><p>17</p><p>18</p><p>19</p><p>20</p><p>21</p><p>22</p><p>23</p>
               </div>
 
@@ -59,6 +61,27 @@
               </div>
             </div>
           </div>
+
+          <div class="container">
+            <div class="section">
+              <h2 class="green">Artist Origins (top 50)</h2>
+              <h4 id="warningLowData">! Low quality stats (probably lack of Wikidata information) !</h4>
+              <ul id="artistOriginList"></ul>
+              <h4>Total could be over 50 if there are bands/groups included.</h4>
+            </div>
+
+            <div class="section">
+              <h2 class="green">Artist Ages (top 50)</h2>
+              <h4 id="warningLowData">! Low quality stats (probably lack of Wikidata information) !</h4>
+              <div id="ageDistribution" style="--columns:5" class="barChart"></div>
+              <div class="barChart" style='text-align:center;--columns:5'>
+                <p>&#60;20</p><p>20-29</p><p>30-39</p><p>40-49</p><p>>49</p>
+              </div>
+              <h4 id="youngestText"></h4>
+              <h4 id="oldestText"></h4>
+            </div>
+          </div>
+
         </div>
 
         <div>
@@ -67,6 +90,7 @@
         </div>
 
         <script>
+          document.getElementById("fileResults").style.display = "none";
           function readFile(input) {
               let file = input.files[0];
               let fileReader = new FileReader();
