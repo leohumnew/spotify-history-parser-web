@@ -7,6 +7,7 @@ function changeDate() {
     document.getElementById("dateType").value = "def";
     document.getElementById("dateTypeDiv").style.display = "revert";
 }
+
 function readFile(input) {
     let file = input.files[0];
     fileReader.readAsText(file);
@@ -23,6 +24,7 @@ function readFile(input) {
         alert('Invalid file provided. Reload & make sure to choose the StreamingHistory_.json file.');
     };
 }
+
 function chooseDateType(choice) {
     document.getElementById("dateTypeDiv").style.display = "none";
     if(choice == "allTime") analyzeFile(0,0);
@@ -34,6 +36,7 @@ function chooseDateType(choice) {
         document.getElementById("startDate").setAttribute("max", contentArray[contentArray.length-1]["endTime"].substring(0, 10));
     }
 }
+
 let startDate;
 function setStartDate(choice) {
     startDate = choice;
@@ -43,11 +46,11 @@ function setStartDate(choice) {
     document.getElementById("endDate").value = "";
     document.getElementById("endDateDiv").style.display = "revert";
 }
+
 function setEndDate(choice) {
     document.getElementById("endDateDiv").style.display = "none";
     analyzeFile(new Date(startDate.substring(0,10)), new Date(choice.substring(0,10)));
 }
-
 
 var loaded = false;
 var dateArray = [];
@@ -73,7 +76,6 @@ function analyzeFile(start, end) {
     let singerArray = [];
     let singerTimeArray = [];
     let sortedSingerIndecesArray = [];
-
     let totalTime = 0;
     let timeDistribution = new Array(24).fill(0);
     let months = ["0", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -170,8 +172,6 @@ function analyzeFile(start, end) {
         timeDistributionChart.innerHTML += "<div class='bar' style='height:" + Math.round(timeDistribution[i] * 180 / maxTimeInHour) +"px'></div>";
     }
 
-
-
     // Overview
     document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
     document.getElementById("topArtist").innerHTML = singerArray[sortedSingerIndecesArray[0]] + "<br><span style='font-size:0.75em'>Listened to for " + Math.round(singerTimeArray[sortedSingerIndecesArray[0]]/60) + " minutes</span>";
@@ -208,7 +208,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
     let response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
-            "Authorization": 'Basic NzlkYzdhM2FjYzFkNDg2YTk3MjYyNTBhMzBjMDgwYzY6OGU3ZGM5NDFkN2VkNDQ3ZmIyZGJkNTg5ZjcwZjEyNTU=',
+            "Authorization": 'Basic SPOTIFY_KEY',
             "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         },
         body: "grant_type=client_credentials"
@@ -277,7 +277,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         queryString = encodeURIComponent(queryString);
         let response = await fetch("https://query.wikidata.org/sparql?query=" + queryString + "&format=json&origin=*", {
             headers: {
-                'User-Agent': 'SpotifyHistoryAnalyzer/0.8 (leohumnew.com/spotifyanalyzer;' + atob('bGVvaHVtbmV3QHByb3Rvbm1haWwuY29t') + ')'
+                'User-Agent': 'SpotifyHistoryAnalyzer/0.8 (EMAIL)'
             }
         });
         let json = await response.json();
@@ -352,7 +352,6 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         console.log("Error on Wikidata search: " + err);
     }
 }
-
 
 // Recalculate time distribution by date chart when window size changed
 window.addEventListener('resize', function(event){
