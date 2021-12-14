@@ -13,13 +13,42 @@
     <body>
         <div id="header" class="center">
           <h1>Spotify History Analyzer</h1>
-          <label class="button" for="upload">Select File</label>
-          <input id="upload" onchange="readFile(this)" type="file">
+          <div class="headerSection" id="selectButtonDiv">
+            <label class="button" for="upload">Select File</label>
+            <input id="upload" onchange="readFile(this)" type="file">
+          </div>
+          <div class="headerSection" id="changeDateDiv">
+            <button class="button" style="margin:0" onclick="changeDate()">Change Date</button>
+          </div>
+          <div class="headerSection" id="dateTypeDiv">
+            <label for="dateType">Date range:</label>
+            <select id="dateType" onchange="chooseDateType(this.value)">
+              <option value="def" disabled selected>---</option>
+              <option value="allTime">All Time</option>
+              <option value="lastYear">Last Year</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="headerSection" id="startDateDiv">
+            <label for="startDate">From:</label>
+            <input type="date" id="startDate" style="font-size:1.4em" onchange="setStartDate(this.value)">
+          </div>
+          <div class="headerSection" id="endDateDiv">
+            <label for="endDate">To:</label>
+            <input type="date" id="endDate" style="font-size:1.4em" onchange="setEndDate(this.value)">
+          </div>
         </div>
+
+        <div class="section" id="noDataText">
+          <h3 class="warning">No data in this range</h3>
+          <h4>Please reload and try again with a different date range!</h4>
+        </div>
+
         <div class="section" id="explanationText">
           <h3>Click on <i>Select File</i> above, and select the <i>"StreamingHistory0.json"</i>  file from your Spotify data download.</h3>
-          <h4>If you have not yet downloaded it:<br> 1. Go to the Spotify website and log in<br> 2. Go to account settings, then privacy options<br> 3. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days.<br><br></h4>
-          <h5>Internet Explorer and other outdated browsers are not supported.</h5>
+          <h4>If you have not yet downloaded it:</h4>
+          <h4 style="margin-left:1rem">1. Go to the Spotify website and log in.<br>2. Go to account settings<br><image style="height:5rem" src="images/accountSettings.png"></image><br>3. Go to privacy settings.<br><image style="height:2.5rem" src="images/privSettings.png"></image><br>4. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days.<br><image style="height:7rem" src="images/dataDownload.png"></image><br><br><br></h4>
+          <h5 style="color:red">Internet Explorer and other outdated browsers are not supported.</h5>
         </div>
 
         <div id="fileResults">
@@ -64,45 +93,43 @@
 
           <div class="container">
             <div class="section">
-              <h2 class="green">Artist Origins (top 50)</h2>
-              <h4 id="warningLowData">! Low quality stats (probably lack of Wikidata information) !</h4>
-              <ul id="artistOriginList"></ul>
-              <h4>Total could be over 50 if there are bands/groups included.</h4>
+              <div class="wikidataDiv">
+                <h2 class="green">Artist Origins (top 50)</h2>
+                <h4 class="warning warningLowData">! Low quality stats (lack of Wikidata information or short time range) !</h4>
+                <ul id="artistOriginList"></ul>
+                <h4>Total could be over 50 if there are bands/groups included.</h4>
+              </div>
+              <div class="loader wikidataLoader"></div>
             </div>
 
             <div class="section">
-              <h2 class="green">Artist Ages (top 50)</h2>
-              <h4 id="warningLowData">! Low quality stats (probably lack of Wikidata information) !</h4>
-              <div id="ageDistribution" style="--columns:5" class="barChart"></div>
-              <div class="barChart" style='text-align:center;--columns:5'>
-                <p>&#60;20</p><p>20-29</p><p>30-39</p><p>40-49</p><p>>49</p>
+              <div class="wikidataDiv">
+                 <h2 class="green">Artist Ages (top 50)</h2>
+                <h4 class="warning warningLowData">! Low quality stats (lack of Wikidata information or short time range) !</h4>
+                <div id="ageDistribution" style="--columns:5" class="barChart"></div>
+                <div class="barChart" style='text-align:center;--columns:5'>
+                  <p>&#60;20</p><p>20-29</p><p>30-39</p><p>40-49</p><p>>49</p>
+                </div>
+                <h4 id="youngestText"></h4>
+                <h4 id="oldestText"></h4>
               </div>
-              <h4 id="youngestText"></h4>
-              <h4 id="oldestText"></h4>
+              <div class="loader wikidataLoader"></div>
             </div>
           </div>
 
         </div>
 
-        <div>
-          <image src="images/spotifyLogo.png" id="spotifyLogo"></image>
-          <h5>Track covers by Spotify</h5>
+        <div class="section">
+          <div class="attribution">
+            <h5>Track covers by</h5>
+            <image src="images/spotifyLogo.png"></image>
+          </div>
+          <div class="attribution">
+            <h5>Artist information</h5>
+            <image src="images/wikidataLogo.png"></image>
+          </div>
         </div>
 
-        <script>
-          document.getElementById("fileResults").style.display = "none";
-          function readFile(input) {
-              let file = input.files[0];
-              let fileReader = new FileReader();
-              fileReader.readAsText(file);
-              fileReader.onload = function() {
-                analyzeFile(fileReader.result);
-              };
-              fileReader.onerror = function() {
-                alert(fileReader.error);
-              };
-          }
-        </script>
         <script src="main.js"></script>
     </body>
 </html>

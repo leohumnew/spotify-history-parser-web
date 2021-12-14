@@ -10,22 +10,28 @@ body {
     font-family: "Montserrat Regular", Arial;
 }
 
+label {
+    font-size: 1.8em;
+}
 h1 {
     font-size: 3em;
+    margin: 2rem 0;
 }
-
 h2 {
     font-size: 2em;
 }
-
 h3 {
     font-size: 1.5em;
 }
-
+h4 {
+    font-size: 1.1em;
+}
 h5 {
     margin-top: 0;
 }
-
+select {
+    font-size:1.4em;
+}
 p {
     font-size: 1em;
     margin: 5px 0;
@@ -34,23 +40,27 @@ p {
 ul {
     padding-left: 0;
 }
-
 li {
     padding: 5px;
     overflow: hidden;
     color: #ffffff;
 }
-
 li:nth-of-type(odd) {
     background-color: rgb(48, 49, 48);
 }
 
+h4 img {
+    margin-top: 5px;
+    margin-left: 7px;
+    margin-bottom: 10px;
+}
+
 .button {
-    padding: 0.5rem 0.5rem;
+    padding: 0.4rem 0.6rem;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 20px;
     background-color: rgb(30, 215, 96);
-    font-size: 1.1em;
+    font-size: 1.8em;
     font-weight: bold;
     color: #000;
 }
@@ -67,11 +77,26 @@ input[type="file"] {
     text-align: center;
 }
 
+.headerSection {
+    position: relative;
+    padding: 0.7rem 0rem;
+    margin: 0rem 0.7rem;
+    border-radius:5px;
+    animation-name: fadeUp;
+    animation-duration: 0.5s;
+}
+
+.headerSection:hover {
+    background-color: #282828;
+    transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
+}
+
 .section {
     padding: 0.5rem 1rem 0.5rem 2rem;
     background-color: #242424;
     margin: 1rem 2rem;
     border-radius:5px;
+    position: relative;
 }
 
 .section:hover {
@@ -132,6 +157,44 @@ input[type="file"] {
     text-align: center;
 }
 
+.warning {
+    color: red;
+}
+
+.attribution h5 {
+    display:inline-block;
+    margin: 1rem 0;
+}
+.attribution img {
+    height: 25px;
+    width: 80px;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.loader {
+    border: 0.3rem solid #f3f3f3;
+    border-top: 0.3rem solid #555555;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    animation: spin 1.5s linear infinite;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+}
+
+.wikidataDiv {
+    visibility: hidden;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  40% { transform: rotate(160deg); }
+  60% { transform: rotate(200deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media only screen and (max-width: 1200px) {
     p {
         font-size: 0.7em;
@@ -142,6 +205,7 @@ input[type="file"] {
 @media only screen and (max-width: 760px) {
     h1 {
         font-size: 1.8em;
+        margin: 1rem 0;
     }
     h2 {
         font-size: 1.4em;
@@ -149,8 +213,17 @@ input[type="file"] {
     h3 {
         font-size: 1em;
     }
+    h4 {
+        font-size: 0.7em;
+    }
+    select {
+        font-size:0.9em;
+    }
+    label {
+        font-size: 1.1em;
+    }
     .button {
-        font-size: 0.9em;
+        font-size: 0.8em;
     }
     .section {
         margin: 0.8rem;
@@ -159,6 +232,13 @@ input[type="file"] {
     .container {
         grid-template-columns: 1fr;
     }
+}
+
+#fileResults {
+    visibility: hidden;
+    position: relative;
+    animation-name: fadeUp;
+    animation-duration: 0.8s;
 }
 
 #topSongImage {
@@ -181,7 +261,7 @@ input[type="file"] {
 
 #header {
     padding-top:0.5rem;
-    padding-bottom: 3.5rem;
+    padding-bottom: 1rem;
     margin: 2rem;
     border-radius:5px;
     background-color: #242424;
@@ -204,23 +284,30 @@ input[type="file"] {
     height:200px;
 }
 
-#fileResults {
-    visibility: hidden;
+#dateTypeDiv {
+    display: none;
 }
-
-#warningLowData {
+#dateRangeDiv {
+    display: none;
+}
+#startDateDiv {
+    display: none;
+}
+#endDateDiv {
+    display: none;
+}
+#changeDateDiv {
     display: none;
 }
 
-#spotifyLogo {
-    height: 25px;
-    width: 80px;
+#noDataText {
+    display: none;
 }
 
 @media only screen and (max-width: 760px) {
     #header {
         padding-top:0.3rem;
-        padding-bottom: 2rem;
+        padding-bottom: 0.3rem;
         margin: 1.5rem 0.8rem;
     }
     #topSongImage {
@@ -234,4 +321,10 @@ input[type="file"] {
     #imageContainer {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
+}
+
+
+@keyframes fadeUp {
+  from{bottom: -1rem; opacity:0}
+  to{bottom:0; opacity:1}
 }
