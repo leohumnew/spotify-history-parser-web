@@ -1,53 +1,28 @@
-@font-face {
-  font-family: 'Montserrat Regular';
-  src: url(Montserrat-Regular.ttf) format('truetype');
-  font-display: swap;
-}
-
-body {
-    background-color: #000;
-    color: #ffffff;
-    font-family: "Montserrat Regular", Arial;
-}
-
-label {
-    font-size: 1.8em;
-}
+label {font-size: 1.8em;}
 h1 {
     font-size: 3em;
     margin: 2rem 0;
 }
-h2 {
-    font-size: 2em;
-}
-h3 {
-    font-size: 1.5em;
-}
-h4 {
-    font-size: 1.1em;
-}
+h2 {font-size: 2em;}
+h3 {font-size: 1.5em;}
+h4 {font-size: 1.1em;}
 h5 {
     margin-top: 0;
+    font-size: 0.7em;
 }
-select {
-    font-size:1.4em;
-}
+select, input[type="date"] {font-size:1.4em !important;}
 p {
     font-size: 1em;
     margin: 5px 0;
 }
-
-ul {
-    padding-left: 0;
-}
+ul {padding-left: 0;}
 li {
     padding: 5px;
     overflow: hidden;
     color: #ffffff;
+    font-size: 1em;
 }
-li:nth-of-type(odd) {
-    background-color: rgb(48, 49, 48);
-}
+li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
 
 h4 img {
     margin-top: 5px;
@@ -55,27 +30,25 @@ h4 img {
     margin-bottom: 10px;
 }
 
+input[type="file"] {display: none;}
+
 .button {
     padding: 0.4rem 0.6rem;
     cursor: pointer;
     border-radius: 20px;
+    border: none;
     background-color: rgb(30, 215, 96);
     font-size: 1.8em;
-    font-weight: bold;
+
     color: #000;
 }
-
 .button:hover {
     background-color: rgb(20, 190, 80);
 }
 
-input[type="file"] {
-    display: none;
-}
+.warning {color: red;}
 
-.center {
-    text-align: center;
-}
+.center {text-align: center;}
 
 .headerSection {
     position: relative;
@@ -85,7 +58,6 @@ input[type="file"] {
     animation-name: fadeUp;
     animation-duration: 0.5s;
 }
-
 .headerSection:hover {
     background-color: #282828;
     transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
@@ -98,20 +70,16 @@ input[type="file"] {
     border-radius:5px;
     position: relative;
 }
-
 .section:hover {
     background-color: #282828;
     transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
 }
-
 .container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
 }
 
-.green {
-    color:rgb(30, 215, 96);
-}
+.green {color:rgb(30, 215, 96);}
 
 .barChart {
     margin-right:15px;
@@ -119,7 +87,6 @@ input[type="file"] {
     align-items: end;
     grid-template-columns: repeat(var(--columns), 1fr);
 }
-
 .bar {
     margin:0.2vw;
     border-top-left-radius:4px;
@@ -132,7 +99,6 @@ input[type="file"] {
     display: grid;
     grid-template-columns: repeat(var(--month-count), 1fr);
 }
-
 .point {
     width: 10px;
     height: 10px;
@@ -141,7 +107,6 @@ input[type="file"] {
     border-radius:50%;
     background-color: #ffffff;
 }
-
 .point-line {
     height: 1px;
     width: calc(var(--hyp) * 1px);
@@ -153,17 +118,12 @@ input[type="file"] {
     background-color: #ffffff;
 }
 
-.itemBox {
-    text-align: center;
-}
-
-.warning {
-    color: red;
-}
+.itemBox {text-align: center;}
 
 .attribution h5 {
     display:inline-block;
     margin: 1rem 0;
+    color: lightgray;
 }
 .attribution img {
     height: 25px;
@@ -184,16 +144,7 @@ input[type="file"] {
     top: 50%;
 }
 
-.wikidataDiv {
-    visibility: hidden;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  40% { transform: rotate(160deg); }
-  60% { transform: rotate(200deg); }
-  100% { transform: rotate(360deg); }
-}
+.wikidataDiv {visibility: hidden;}
 
 @media only screen and (max-width: 1200px) {
     p {
@@ -204,34 +155,23 @@ input[type="file"] {
 
 @media only screen and (max-width: 760px) {
     h1 {
-        font-size: 1.8em;
+        font-size: 1.6em;
         margin: 1rem 0;
     }
-    h2 {
-        font-size: 1.4em;
-    }
-    h3 {
-        font-size: 1em;
-    }
-    h4 {
-        font-size: 0.7em;
-    }
-    select {
-        font-size:0.9em;
-    }
-    label {
-        font-size: 1.1em;
-    }
-    .button {
-        font-size: 0.8em;
-    }
+    h2 {font-size: 1.4em;}
+    h3 {font-size: 1em;}
+    h4 {font-size: 0.75em;}
+    h5 {font-size: 0.6em;}
+    li {font-size: 0.7em;}
+    select, input[type="date"] {font-size:1em !important;}
+    label {font-size: 1.1em;}
+    .button {font-size: 0.8em;}
     .section {
         margin: 0.8rem;
         padding: 0.5rem 0.5rem 0.5rem 1rem;
     }
-    .container {
-        grid-template-columns: 1fr;
-    }
+    .container {grid-template-columns: 1fr;}
+    .invisHour {visibility:hidden;}
 }
 
 #fileResults {
@@ -272,35 +212,20 @@ input[type="file"] {
     border-bottom:2px solid white;
     height:200px;
 }
-
 #ageDistribution {
     border-bottom:2px solid white;
     height:200px;
 }
-
 #dateDistribution {
     border-left:2px solid white;
     border-bottom:2px solid white;
     height:200px;
 }
 
-#dateTypeDiv {
-    display: none;
+#dataDownloadImg {
+    height:8rem;
 }
-#dateRangeDiv {
-    display: none;
-}
-#startDateDiv {
-    display: none;
-}
-#endDateDiv {
-    display: none;
-}
-#changeDateDiv {
-    display: none;
-}
-
-#noDataText {
+#dateTypeDiv, #dateRangeDiv, #startDateDiv, #endDateDiv, #changeDateDiv, #noDataText {
     display: none;
 }
 
@@ -318,12 +243,16 @@ input[type="file"] {
         width: 8em;
         height: 8em;
     }
-    #imageContainer {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    }
+    #imageContainer {grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}
+    #dataDownloadImg {height:5rem;}
 }
 
-
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  40% { transform: rotate(160deg); }
+  60% { transform: rotate(200deg); }
+  100% { transform: rotate(360deg); }
+}
 @keyframes fadeUp {
   from{bottom: -1rem; opacity:0}
   to{bottom:0; opacity:1}

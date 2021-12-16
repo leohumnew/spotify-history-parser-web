@@ -7,24 +7,26 @@ function changeDate() {
     document.getElementById("dateType").value = "def";
     document.getElementById("dateTypeDiv").style.display = "revert";
 }
-
 function readFile(input) {
     let file = input.files[0];
     fileReader.readAsText(file);
     fileReader.onload = function() {
         try {
             document.getElementById("selectButtonDiv").style.display = "none";
-            document.getElementById("dateTypeDiv").style.display = "revert";
             contentArray = JSON.parse(fileReader.result);
+            document.getElementById("dateTypeDiv").style.display = "revert";
         } catch (err) {
-            alert('Invalid JSON provided. Reload & make sure to choose the StreamingHistory_.json file.');
+            document.getElementById("selectButtonDiv").style.display = "revert";
+            file = null;
+            alert('Invalid JSON provided. Make sure to select your StreamingHistory_.json file.');
         }
     };
     fileReader.onerror = function() {
-        alert('Invalid file provided. Reload & make sure to choose the StreamingHistory_.json file.');
+        document.getElementById("selectButtonDiv").style.display = "revert";
+        file = null;
+        alert('Invalid file provided. Make sure to select your StreamingHistory_.json file.');
     };
 }
-
 function chooseDateType(choice) {
     document.getElementById("dateTypeDiv").style.display = "none";
     if(choice == "allTime") analyzeFile(0,0);
@@ -36,7 +38,6 @@ function chooseDateType(choice) {
         document.getElementById("startDate").setAttribute("max", contentArray[contentArray.length-1]["endTime"].substring(0, 10));
     }
 }
-
 let startDate;
 function setStartDate(choice) {
     startDate = choice;
@@ -46,11 +47,11 @@ function setStartDate(choice) {
     document.getElementById("endDate").value = "";
     document.getElementById("endDateDiv").style.display = "revert";
 }
-
 function setEndDate(choice) {
     document.getElementById("endDateDiv").style.display = "none";
     analyzeFile(new Date(startDate.substring(0,10)), new Date(choice.substring(0,10)));
 }
+
 
 var loaded = false;
 var dateArray = [];
@@ -63,11 +64,14 @@ function analyzeFile(start, end) {
     const timeDistributionChart = document.getElementById("timeDistribution");
     const dateDistributionLabels = document.getElementById("dateDistributionLabels");
     const dateDistributionChart = document.getElementById("dateDistribution");
+    const hours = document.getElementById("hours");
 
     while(songList.firstChild) songList.removeChild(songList.firstChild);
     while(timeDistributionChart.firstChild) timeDistributionChart.removeChild(timeDistributionChart.firstChild);
     while(dateDistributionChart.firstChild) dateDistributionChart.removeChild(dateDistributionChart.firstChild);
     while(dateDistributionLabels.firstChild) dateDistributionLabels.removeChild(dateDistributionLabels.firstChild);
+    while(hours.firstChild) hours.removeChild(hours.firstChild);
+    document.getElementById("noDataText").style.display = "none";
 
     let songArray = [];
     let sortedSongIndecesArray = [];
@@ -76,6 +80,7 @@ function analyzeFile(start, end) {
     let singerArray = [];
     let singerTimeArray = [];
     let sortedSingerIndecesArray = [];
+
     let totalTime = 0;
     let timeDistribution = new Array(24).fill(0);
     let months = ["0", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -101,7 +106,9 @@ function analyzeFile(start, end) {
         }
         if(lastIndex <= firstIndex) {
             document.getElementById("noDataText").style.display = "block";
-            document.getElementById("explanationText").style.display = "none";
+            document.getElementById("changeDateDiv").style.display = "revert";
+            document.getElementById("explanation1").style.display = "none";
+            document.getElementById("explanation2").style.display = "none";
             return 1;
         }
     } else if (start == -1) {
@@ -119,14 +126,15 @@ function analyzeFile(start, end) {
     // Loop through all songs in file and save them to an object
     for (let i = firstIndex; i < lastIndex; i++) {
         let song = contentArray[i];
+        let date = new Date(song["endTime"].substring(0,16)+" UTC").toLocaleString();
         totalTime += song["msPlayed"];
-        timeDistribution[parseInt(song["endTime"].substring(11,13))] += Math.round(song["msPlayed"]/1000);
+        timeDistribution[parseInt(date.substring(12,14))] += Math.round(song["msPlayed"]/1000);
 
-        if(dateArray.indexOf(song["endTime"].substring(0,7)) === -1) {
-            dateArray.push(song["endTime"].substring(0,7));
+        if(dateArray.indexOf(date.substring(3,10)) === -1) {
+            dateArray.push(date.substring(3,10));
             dateArrayTimes.push(0);
         }
-        dateArrayTimes[dateArray.indexOf(song["endTime"].substring(0,7))] += Math.round(song["msPlayed"]/1000);
+        dateArrayTimes[dateArray.indexOf(date.substring(3,10))] += Math.round(song["msPlayed"]/1000);
 
         if (singerArray.indexOf(song["artistName"]) == -1) {
             singerArray.push(song["artistName"]);
@@ -154,7 +162,7 @@ function analyzeFile(start, end) {
       .sort((a, b) => singerTimeArray[b] - singerTimeArray[a]);
 
     // Loop through sorted array and add top # to unordered list
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; (i < 20) && (i < songArray.length); i++) {
         let node = document.createElement('li');
         node.innerHTML = songArray[sortedSongIndecesArray[i]] + "  (<i>" + singerArray[singerIndecesArray[sortedSongIndecesArray[i]]] + "</i>) <span style='float: right;'><b>" + repetitionArray[sortedSongIndecesArray[i]] + "</b></span>";
         songList.appendChild(node);
@@ -171,6 +179,16 @@ function analyzeFile(start, end) {
     for (let i = 0; i < 24; i++) {
         timeDistributionChart.innerHTML += "<div class='bar' style='height:" + Math.round(timeDistribution[i] * 180 / maxTimeInHour) +"px'></div>";
     }
+    for (let i = 0; i < 10; i++) {
+        if(i%2 == 0)hours.innerHTML += "<p>" + ("0"+i) + "</p>";
+        else hours.innerHTML += "<p class='invisHour'>" + ("0"+i) + "</p>";
+    }
+    for (let i = 10; i < 24; i++) {
+        if(i%2 == 0)hours.innerHTML += "<p>" + i + "</p>";
+        else hours.innerHTML += "<p class='invisHour'>" + i + "</p>";
+    }
+
+
 
     // Overview
     document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
@@ -181,7 +199,8 @@ function analyzeFile(start, end) {
     getWikipediaInformation(singerArray[sortedSingerIndecesArray[0]], singerArray, sortedSingerIndecesArray);
 
 
-    document.getElementById("explanationText").style.display = "none";
+    document.getElementById("explanation1").style.display = "none";
+    document.getElementById("explanation2").style.display = "none";
     document.getElementById("changeDateDiv").style.display = "revert";
     document.getElementById("fileResults").style.visibility = "visible";
     document.getElementById("fileResults").style.display = "";
@@ -191,8 +210,11 @@ function analyzeFile(start, end) {
     dateDistributionChart.style.setProperty("--month-count", dateArray.length);
     for (let i = 0; i < dateArray.length; i++) if(dateArrayTimes[i] > mostSeconds) mostSeconds = dateArrayTimes[i];
     for (let i = 0; i < dateArray.length; i++) {
-        if(dateArray[i].substring(5,7) == "01" || i == 0 || i == dateArray.length - 1)dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(5,7))] + "<br>" + dateArray[i].substring(0,4) + "</p>";
-        else dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(5,7))] + "</p>";
+        11/2021
+        2021-11
+        if(dateArray[i].substring(0,2) == "01" || i == 0 || i == dateArray.length - 1)dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))] + "<br>" + dateArray[i].substring(3,7) + "</p>";
+        else if(dateArray.length < 13) dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))] + "</p>";
+        else dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))].substring(0,1) + "</p>";
 
         let pointHeight = dateArrayTimes[i] * dateDistributionChart.clientHeight / mostSeconds;
         let hyp = Math.sqrt(Math.pow(dateDistributionChart.clientWidth/dateArray.length, 2) + Math.pow((dateArrayTimes[i+1] - dateArrayTimes[i]) * dateDistributionChart.clientHeight / mostSeconds, 2));
@@ -208,7 +230,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
     let response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
-            "Authorization": 'Basic SPOTIFY_KEY',
+            "Authorization": 'Basic API_KEY',
             "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         },
         body: "grant_type=client_credentials"
@@ -254,8 +276,8 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         document.getElementsByClassName("wikidataLoader")[0].style.visibility = "visible";
         document.getElementsByClassName("wikidataLoader")[1].style.visibility = "visible";
 
-        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF"];
-        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)"];
+        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled"];
+        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)"];
         const alwaysLowercase = ["and", "at", "the", "of"];
 
         let queryString = "SELECT ?page ?birth ?locLabel WHERE{VALUES ?page{";
@@ -277,7 +299,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         queryString = encodeURIComponent(queryString);
         let response = await fetch("https://query.wikidata.org/sparql?query=" + queryString + "&format=json&origin=*", {
             headers: {
-                'User-Agent': 'SpotifyHistoryAnalyzer/0.8 (EMAIL)'
+                'User-Agent': 'SpotifyHistoryAnalyzer/0.8 CONTACT_INFO'
             }
         });
         let json = await response.json();
@@ -305,6 +327,10 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
                 } else {
                     countryCount[countries.indexOf(artistInfo[i].locLabel.value)] += 1;
                 }
+            }catch(err){
+                try{console.log("Missing birthplace for "+artistInfo[i].page.value);}catch(err){console.log("Missing birthplace for artist")}
+            }
+            try {
                 let age = 0;
                 if(artistInfo[i].birth.value.length >= 10)age = Math.floor((new Date() - new Date(artistInfo[i].birth.value.substring(0,10))) / 31557600000);
                 else age = Math.floor((new Date() - new Date(artistInfo[i].birth.value.substring(0,4), 0, 1)) / 31557600000);
@@ -322,7 +348,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
                 else if(age < 50) ageCount[3]++;
                 else  ageCount[4]++;
             } catch(err) {
-                console.log("Missing age or birthplace for artist");
+                try{console.log("Missing age for "+artistInfo[i].page.value);}catch(err){console.log("Missing age for artist")}
             }
         }
         document.getElementById("youngestText").innerHTML = "Youngest Artist: " + ageExtremesNames[0] + " (" + ageExtremes[0] + ")";
@@ -352,6 +378,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         console.log("Error on Wikidata search: " + err);
     }
 }
+
 
 // Recalculate time distribution by date chart when window size changed
 window.addEventListener('resize', function(event){
