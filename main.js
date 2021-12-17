@@ -388,6 +388,5 @@ window.addEventListener('resize', function(event){
             children[i].children[1].style.setProperty("--angle", deg);
             children[i].children[1].style.setProperty("--hyp", hyp);
         }
-
     }
 });
