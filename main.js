@@ -7,8 +7,8 @@ function changeDate() {
     document.getElementById("dateType").value = "def";
     document.getElementById("dateTypeDiv").style.display = "revert";
 }
-function readFile(input) {
-    let file = input.files[0];
+function readFile(i) {
+    let file = i.files[0];
     fileReader.readAsText(file);
     fileReader.onload = function() {
         try {
@@ -187,8 +187,6 @@ function analyzeFile(start, end) {
         if(i%2 == 0)hours.innerHTML += "<p>" + i + "</p>";
         else hours.innerHTML += "<p class='invisHour'>" + i + "</p>";
     }
-
-
 
     // Overview
     document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
@@ -378,7 +376,6 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         console.log("Error on Wikidata search: " + err);
     }
 }
-
 
 // Recalculate time distribution by date chart when window size changed
 window.addEventListener('resize', function(event){
