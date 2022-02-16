@@ -1,4 +1,3 @@
-![image](https://user-images.githubusercontent.com/39741041/154276293-d4306670-4f86-442b-907b-a64648f09f7b.png)
 
 # Spotify History Parser Web
  A web-based version of my [Spotify History Parser](https://github.com/Hubbit200/spotify-history-parser), along with some extra features!
@@ -15,3 +14,5 @@
 5. You'll get an email saying your data is ready - download it!
 6. Extract the downloaded folder
 7. Go to the website (link above), and follow the instructions!
+
+![image](https://user-images.githubusercontent.com/39741041/154276293-d4306670-4f86-442b-907b-a64648f09f7b.png)
