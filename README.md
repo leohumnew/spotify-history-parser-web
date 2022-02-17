@@ -4,7 +4,7 @@
  Makes use of the Spotify API and Wikidata SPARQL requests. Everything is calculated client-side so that your listen history never leaves your device.
 
 ## Check it out at
- [Web-based Spotify History Analyzer](https://leohumnew.com/analyzespotify)
+ [Web-based Spotify History Analyzer](https://leohumnew.com/spotify)
 
 ## Instructions:
 1. Log in to Spotify in a web browser (the app does't have what you need)
