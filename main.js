@@ -30,7 +30,8 @@ function readFile(i) {
 function chooseDateType(choice) {
     document.getElementById("dateTypeDiv").style.display = "none";
     if(choice == "allTime") analyzeFile(0,0);
-    else if(choice == "lastYear") analyzeFile(-1,0);
+    else if(choice == "pastYear") analyzeFile(-1,0);
+    else if(choice == "past2Months") analyzeFile(-2,0);
     else {
         document.getElementById("startDate").value = "";
         document.getElementById("startDateDiv").style.display = "revert";
@@ -114,6 +115,16 @@ function analyzeFile(start, end) {
     } else if (start == -1) {
         start = new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10));
         start.setFullYear(start.getFullYear() - 1);
+
+        for (let i = 0; i < contentArray.length; i++){
+            if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
+                firstIndex = i;
+                break;
+            }
+        }
+    } else if (start == -2) {
+        start = new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10));
+        start.setDate(start.getDate() - 61);
 
         for (let i = 0; i < contentArray.length; i++){
             if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
@@ -208,16 +219,18 @@ function analyzeFile(start, end) {
     dateDistributionChart.style.setProperty("--month-count", dateArray.length);
     for (let i = 0; i < dateArray.length; i++) if(dateArrayTimes[i] > mostSeconds) mostSeconds = dateArrayTimes[i];
     for (let i = 0; i < dateArray.length; i++) {
-        11/2021
-        2021-11
         if(dateArray[i].substring(0,2) == "01" || i == 0 || i == dateArray.length - 1)dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))] + "<br>" + dateArray[i].substring(3,7) + "</p>";
         else if(dateArray.length < 13) dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))] + "</p>";
         else dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))].substring(0,1) + "</p>";
 
         let pointHeight = dateArrayTimes[i] * dateDistributionChart.clientHeight / mostSeconds;
-        let hyp = Math.sqrt(Math.pow(dateDistributionChart.clientWidth/dateArray.length, 2) + Math.pow((dateArrayTimes[i+1] - dateArrayTimes[i]) * dateDistributionChart.clientHeight / mostSeconds, 2));
-        let deg = Math.asin(((dateArrayTimes[i] - dateArrayTimes[i+1]) * dateDistributionChart.clientHeight / mostSeconds) / hyp) * (180 / Math.PI);
-        dateDistributionChart.innerHTML += "<div style='position:relative;'> <div class='point' style='margin-top: "+ (dateDistributionChart.clientHeight-pointHeight) +"px'></div> <div class='point-line' style='--hyp:" + hyp + ";--angle:" + deg + "'></div> </div>"
+        if (i < dateArray.length - 1) {
+            let hyp = Math.sqrt(Math.pow(dateDistributionChart.clientWidth/dateArray.length, 2) + Math.pow((dateArrayTimes[i+1] - dateArrayTimes[i]) * dateDistributionChart.clientHeight / mostSeconds, 2));
+            let deg = Math.asin(((dateArrayTimes[i] - dateArrayTimes[i+1]) * dateDistributionChart.clientHeight / mostSeconds) / hyp) * (180 / Math.PI);
+            dateDistributionChart.innerHTML += "<div style='position:relative;'> <div class='point' style='margin-top: "+ (dateDistributionChart.clientHeight-pointHeight) +"px'></div> <div class='point-line' style='--hyp:" + hyp + ";--angle:" + deg + "'></div> </div>"
+        } else {
+            dateDistributionChart.innerHTML += "<div style='position:relative;'> <div class='point' style='margin-top: "+ (dateDistributionChart.clientHeight-pointHeight) +"px'></div>";
+        }
     }
 
     loaded = true;
@@ -228,7 +241,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
     let response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
-            "Authorization": 'Basic API_KEY',
+            "Authorization": 'Basic ', //Auth code
             "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         },
         body: "grant_type=client_credentials"
@@ -274,8 +287,8 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         document.getElementsByClassName("wikidataLoader")[0].style.visibility = "visible";
         document.getElementsByClassName("wikidataLoader")[1].style.visibility = "visible";
 
-        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled"];
-        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)"];
+        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid"];
+        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)"];
         const alwaysLowercase = ["and", "at", "the", "of"];
 
         let queryString = "SELECT ?page ?birth ?locLabel WHERE{VALUES ?page{";
@@ -297,7 +310,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         queryString = encodeURIComponent(queryString);
         let response = await fetch("https://query.wikidata.org/sparql?query=" + queryString + "&format=json&origin=*", {
             headers: {
-                'User-Agent': 'SpotifyHistoryAnalyzer/0.8 CONTACT_INFO'
+                'User-Agent': 'SpotifyHistoryAnalyzer/0.9' //Contact Info
             }
         });
         let json = await response.json();
@@ -382,7 +395,7 @@ window.addEventListener('resize', function(event){
     if(loaded) {
         let dateDistributionChart = document.getElementById("dateDistribution");
         let children = dateDistributionChart.children;
-        for (let i = 0; i < children.length; i++) {
+        for (let i = 0; i < children.length - 1; i++) {
             let hyp = Math.sqrt(Math.pow(dateDistributionChart.clientWidth/dateArray.length, 2) + Math.pow((dateArrayTimes[i+1] - dateArrayTimes[i]) * dateDistributionChart.clientHeight / mostSeconds, 2));
             let deg = Math.asin(((dateArrayTimes[i] - dateArrayTimes[i+1]) * dateDistributionChart.clientHeight / mostSeconds) / hyp) * (180 / Math.PI);
             children[i].children[1].style.setProperty("--angle", deg);
