@@ -1,13 +1,17 @@
 <!-- Written by Leo https://github.com/Hubbit200 -->
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
       <title>Spotify History Analyzer</title>
+      <meta name="title" content="Spotify History Analyzer">
+      <meta charset="utf-8" />
+      <link rel="canonical" href="https://leohumnew.com/spotify/" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="description" content="Free Spotify history parser">
       <meta name="keywords" content="Spotify, History, Music, Stats">
       <meta name="author" content="Leo">
+
       <style>
         @font-face {
           font-family: 'Montserrat Regular';
@@ -64,7 +68,7 @@
         </div>
         <div class="section" id="explanation2">
           <h4>If you have not yet downloaded the file:</h4>
-          <h4 style="margin-left:0.8rem;line-height:1.8">1. Go to the Spotify website and log in.<br>2. Go to account settings<br><image style="height:5rem" src="images/accountSettings.png"></image><br>3. Go to privacy settings.<br><image style="height:2.3rem" src="images/privSettings.png"></image><br>4. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days.<br><image id="dataDownloadImg" src="images/dataDownload.png"></image><br><br><br></h4>
+          <h4 style="margin-left:0.8rem;line-height:1.8">1. Go to the Spotify website and log in.<br>2. Go to account settings<br><image style="height:5rem" src="images/accountSettings.png"></image><br>3. Go to privacy settings.<br><image style="height:2.3rem" src="images/privSettings.png"></image><br>4. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days to arrive once you request it.<br><image id="dataDownloadImg" src="images/dataDownload.png"></image><br><br><br></h4>
           <h5 style="color:red">Internet Explorer and other outdated browsers are not supported.</h5>
         </div>
 
@@ -95,14 +99,13 @@
               <h2 class="green">Stats</h2>
               <h3 id="listenTime"></h3>
 
+              <h3 style="margin-bottom:4px;">Listen time distribution by month:</h3>
+              <div id="dateDistribution" class="lineChart"></div>
+              <div id="dateDistributionLabels" class="lineChart" style='text-align:center; --month-count:15'></div>
+
               <h3 style="margin-bottom:4px;">Listen time distribution by hour:</h3>
               <div id="timeDistribution" style="--columns:24" class="barChart"></div>
               <div id="hours" class="barChart" style='text-align:center;--columns:24'></div>
-
-              <h3 style="margin-bottom:4px;">Listen time distribution by month:</h3>
-              <div id="dateDistribution" class="lineChart"></div>
-              <div id="dateDistributionLabels" class="lineChart" style='text-align:center; --month-count:15'>
-              </div>
             </div>
           </div>
 

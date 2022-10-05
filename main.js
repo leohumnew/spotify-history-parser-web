@@ -256,22 +256,26 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
 async function makeSearches(t, topSong, topSongArtist, topArtist) {
     let response = await fetch("https://api.spotify.com/v1/search?q=track%3A"+ encodeURIComponent(topSong) +"+artist%3A"+ encodeURIComponent(topSongArtist) +"&type=track&limit=1", {
         headers: {
-            "Authorization": 'Bearer ' + t
+            "Authorization": 'Bearer ' + t,
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         }
     });
     if(response.ok) {
         let json = await response.json();
-        document.getElementById("topSongImage").src = json.tracks.items[0].album.images[1].url;
+        if(json.tracks.items[0] != null) document.getElementById("topSongImage").src = json.tracks.items[0].album.images[1].url;
+        else document.getElementById("topSongImage").src = "images/def_song.png";
     }
 
     let response2 = await fetch("https://api.spotify.com/v1/search?q=artist%3A" + encodeURIComponent(topArtist) + "&type=artist&limit=1", {
         headers: {
-            "Authorization": 'Bearer ' + t
+            "Authorization": 'Bearer ' + t,
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         }
     });
     if(response2.ok) {
         let json = await response2.json();
-        document.getElementById("topArtistImage").src = json.artists.items[0].images[1].url;
+        if(json.artists.items[0] != null) document.getElementById("topArtistImage").src = json.artists.items[0].images[1].url;
+        else document.getElementById("topArtistImage").src = "images/def_singer.png";
     }
 }
 
@@ -287,8 +291,8 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         document.getElementsByClassName("wikidataLoader")[0].style.visibility = "visible";
         document.getElementsByClassName("wikidataLoader")[1].style.visibility = "visible";
 
-        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid"];
-        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)"];
+        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid", "Drake", "MIKA"];
+        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)", "Drake (musician)", "Mika (singer)"];
         const alwaysLowercase = ["and", "at", "the", "of"];
 
         let queryString = "SELECT ?page ?birth ?locLabel WHERE{VALUES ?page{";
