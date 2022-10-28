@@ -2,6 +2,28 @@ let fileReader = new FileReader();
 let contentArray = null;
 document.getElementById("fileResults").style.display = "none";
 
+// function selectFolder() {
+//     let folder = dialog.showOpenDialogSync({
+//         properties: ['openDirectory']
+//     });
+//     if(folder != undefined) {
+//         document.getElementById("folderPath").innerHTML = folder[0];
+//         getFiles(folder[0]);
+//     }
+// }
+
+// // get all files in a folder
+// function getFiles(folder) {
+//     let files = fs.readdirSync(folder);
+//     let fileList = document.getElementById("fileList");
+//     fileList.innerHTML = "";
+//     for(let i = 0; i < files.length; i++) {
+//         fileList.innerHTML += "<li>" + files[i] + "</li>";
+//     }
+//     console.log(fileList);
+// }
+// selectFolder()
+
 function changeDate() {
     document.getElementById("changeDateDiv").style.display = "none";
     document.getElementById("dateType").value = "def";
@@ -238,18 +260,35 @@ function analyzeFile(start, end) {
 
 //Get Spotify credentials
 async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
-    let response = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: {
-            "Authorization": 'Basic ', //Auth code
-            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
-        },
-        body: "grant_type=client_credentials"
+    // let response = await fetch("https://accounts.spotify.com/api/token", {
+    //     method: "POST",
+    //     headers: {
+    //         "Authorization": 'Basic NzlkYzdhM2FjYzFkNDg2YTk3MjYyNTBhMzBjMDgwYzY6OGU3ZGM5NDFkN2VkNDQ3ZmIyZGJkNTg5ZjcwZjEyNTU=', //Auth code
+    //         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+    //     },
+    //     body: "grant_type=client_credentials"
+    // });
+    // if(response.ok) {
+    //     let json = await response.json();
+    //     makeSearches(json.access_token, topSong, topSongArtist, topArtist);
+    // }
+
+    fetch("getS.php", {
+        method: 'POST'
+    }).then(response => {
+            if (response.status !== 200) {
+                console.log('Response not OK. Status Code: ' + response.status);
+                return;
+            }
+            response.text().then(async function(data) {
+                console.log(data);
+                makeSearches(data, topSong, topSongArtist, topArtist);
+            }).catch(err => {
+                console.log('Credential parse Error: ', err);
+            });
+    }).catch(err => {
+        console.log('Error getting credential PHP with Fetch: ', err);
     });
-    if(response.ok) {
-        let json = await response.json();
-        makeSearches(json.access_token, topSong, topSongArtist, topArtist);
-    }
 }
 
 // Search spotify images
