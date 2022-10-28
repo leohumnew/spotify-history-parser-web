@@ -1,3 +1,4 @@
+/* Font sizes */
 label {font-size: 1.8em;}
 h1 {
     font-size: 3em;
@@ -10,45 +11,30 @@ h5 {
     margin-top: 0;
     font-size: 0.7em;
 }
-select, input[type="date"] {font-size:1.4em !important;}
 p {
     font-size: 1em;
     margin: 5px 0;
 }
-ul {padding-left: 0;}
-li {
-    padding: 5px;
-    overflow: hidden;
-    color: #ffffff;
-    font-size: 1em;
-}
-li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
-
 h4 img {
     margin-top: 5px;
     margin-left: 7px;
     margin-bottom: 10px;
 }
 
-input[type="file"] {display: none;}
-
-.button {
-    padding: 0.4rem 0.6rem;
-    cursor: pointer;
-    border-radius: 20px;
-    border: none;
-    background-color: rgb(30, 215, 96);
-    font-size: 1.8em;
-
-    color: #000;
-}
-.button:hover {
-    background-color: rgb(20, 190, 80);
-}
-
+/* Generic */
 .warning {color: red;}
 .center {text-align: center;}
+.green {color:rgb(30, 215, 96);}
 
+/* Header */
+#header {
+    padding-top:0.5rem;
+    padding-bottom: 1rem;
+    margin: 2rem;
+    border-radius:5px;
+    background-color: #242424;
+    color:rgb(30, 215, 96);
+}
 .headerSection {
     position: relative;
     padding: 0.7rem 0rem;
@@ -61,7 +47,23 @@ input[type="file"] {display: none;}
     background-color: #282828;
     transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
 }
+/* Inputs */
+select, input[type="date"] {font-size:1.4em !important;}
+input[type="file"] {display: none;}
+.button {
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    border-radius: 20px;
+    border: none;
+    background-color: rgb(30, 215, 96);
+    font-size: 1.8em;
+    color: #000;
+}
+.button:hover {
+    background-color: rgb(20, 190, 80);
+}
 
+/* Body generic */
 .section {
     padding: 0.5rem 1rem 0.5rem 2rem;
     background-color: #242424;
@@ -78,8 +80,30 @@ input[type="file"] {display: none;}
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
 }
 
-.green {color:rgb(30, 215, 96);}
+/* Overview */
+.itemBox {text-align: center;}
+#topSongImage, #topArtistImage {
+    width: 12em;
+    height: 12em;
+    border-radius: 7px;
+    object-fit: cover;
+}
+#imageContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
 
+/* Lists */
+ul {padding-left: 0;}
+li {
+    padding: 5px;
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 1em;
+}
+li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
+
+/* Charts */
 .barChart {
     margin-right:15px;
     display:grid;
@@ -92,7 +116,6 @@ input[type="file"] {display: none;}
     border-top-right-radius:4px;
     background-color: #ffffff;
 }
-
 .lineChart {
     margin-right: 15px;
     display: grid;
@@ -117,20 +140,21 @@ input[type="file"] {display: none;}
     background-color: #ffffff;
 }
 
-.itemBox {text-align: center;}
-
-.attribution h5 {
-    display:inline-block;
-    margin: 1rem 0;
-    color: lightgray;
+#timeDistribution {
+    border-bottom:2px solid white;
+    height:200px;
 }
-.attribution img {
-    height: 25px;
-    width: 80px;
-    vertical-align: middle;
-    margin-left: 5px;
+#ageDistribution {
+    border-bottom:2px solid white;
+    height:200px;
+}
+#dateDistribution {
+    border-left:2px solid white;
+    border-bottom:2px solid white;
+    height:200px;
 }
 
+/* Loader */
 .loader {
     border: 0.3rem solid #f3f3f3;
     border-top: 0.3rem solid #555555;
@@ -143,8 +167,35 @@ input[type="file"] {display: none;}
     top: 50%;
 }
 
-.wikidataDiv {visibility: hidden;}
+/* Footer */
+.attribution h5 {
+    display:inline-block;
+    margin: 1rem 0;
+    color: lightgray;
+}
+.attribution img {
+    height: 25px;
+    width: 80px;
+    vertical-align: middle;
+    margin-left: 5px;
+}
 
+/* Init visibilities */
+#fileResults {
+    visibility: hidden;
+    position: relative;
+    animation-name: fadeUp;
+    animation-duration: 0.8s;
+}
+.wikidataDiv {visibility: hidden;}
+#dataDownloadImg {
+    height:8rem;
+}
+#dateTypeDiv, #dateRangeDiv, #startDateDiv, #endDateDiv, #changeDateDiv, #noDataText {
+    display: none;
+}
+
+/* Responsive */
 @media only screen and (max-width: 1200px) {
     p {
         font-size: 0.7em;
@@ -171,64 +222,6 @@ input[type="file"] {display: none;}
     }
     .container {grid-template-columns: 1fr;}
     .invisHour {visibility:hidden;}
-}
-
-#fileResults {
-    visibility: hidden;
-    position: relative;
-    animation-name: fadeUp;
-    animation-duration: 0.8s;
-}
-
-#topSongImage {
-    width: 12em;
-    height: 12em;
-    border-radius: 7px;
-    object-fit: cover;
-}
-#topArtistImage {
-    width: 12em;
-    height: 12em;
-    border-radius: 7px;
-    object-fit: cover;
-}
-
-#imageContainer {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-#header {
-    padding-top:0.5rem;
-    padding-bottom: 1rem;
-    margin: 2rem;
-    border-radius:5px;
-    background-color: #242424;
-    color:rgb(30, 215, 96);
-}
-
-#timeDistribution {
-    border-bottom:2px solid white;
-    height:200px;
-}
-#ageDistribution {
-    border-bottom:2px solid white;
-    height:200px;
-}
-#dateDistribution {
-    border-left:2px solid white;
-    border-bottom:2px solid white;
-    height:200px;
-}
-
-#dataDownloadImg {
-    height:8rem;
-}
-#dateTypeDiv, #dateRangeDiv, #startDateDiv, #endDateDiv, #changeDateDiv, #noDataText {
-    display: none;
-}
-
-@media only screen and (max-width: 760px) {
     #header {
         padding-top:0.3rem;
         padding-bottom: 0.3rem;
@@ -246,6 +239,7 @@ input[type="file"] {display: none;}
     #dataDownloadImg {height:5rem;}
 }
 
+/* Animation */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   40% { transform: rotate(160deg); }

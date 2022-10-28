@@ -28,6 +28,7 @@
       <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+        <!-- Header -->
         <div id="header" class="center">
           <h1>Spotify History Analyzer</h1>
           <div class="headerSection" id="selectButtonDiv">
@@ -57,11 +58,13 @@
           </div>
         </div>
 
+        <!-- No data error -->
         <div class="section" id="noDataText">
           <h3 class="warning">No data in this range</h3>
           <h4>Please try a different date range!</h4>
         </div>
 
+        <!-- Explanations -->
         <div class="section" id="explanation1">
           <h3>Select the <span style="color:rgb(30,215,96);">StreamingHistory_.json</span>  file from your Spotify data download.</h3>
           <h4>None of your data ever leaves your hands - everything's calculated directly on your device. Converts times to your local timezone.</h4>
@@ -72,7 +75,9 @@
           <h5 style="color:red">Internet Explorer and other outdated browsers are not supported.</h5>
         </div>
 
+        <!-- Analysed data view -->
         <div id="fileResults">
+          <!-- Overview -->
           <div class="section">
             <h2 class="green">Overview</h2>
             <div id="imageContainer">
@@ -89,6 +94,7 @@
             </div>
           </div>
 
+          <!-- Stats -->
           <div class="container">
             <div class="section">
               <h2 class="green">Most Listened To</h2>
@@ -109,6 +115,7 @@
             </div>
           </div>
 
+          <!-- Wikidata stats -->
           <div class="container">
             <div class="section">
               <div class="wikidataDiv">
@@ -136,6 +143,7 @@
           </div>
         </div>
 
+        <!-- Footer -->
         <div style="margin:2rem;text-align:center">
           <h5><a href="https://leohumnew.com" style="color:rgb(30,215,96)">Home - About Me</a></h5>
           <div class="attribution">
