@@ -5,12 +5,12 @@
     <head>
       <title>Spotify History Analyzer</title>
       <meta name="title" content="Spotify History Analyzer">
-      <meta charset="utf-8" />
-      <link rel="canonical" href="https://leohumnew.com/spotify/" />
+      <meta charset="utf-8">
+      <link rel="canonical" href="https://leohumnew.com/spotify/">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="description" content="Free Spotify history parser">
-      <meta name="keywords" content="Spotify, History, Music, Stats">
       <meta name="author" content="Leo">
+      <meta name="color-scheme" content="dark">
 
       <style>
         @font-face {
@@ -32,11 +32,12 @@
         <div id="header" class="center">
           <h1>Spotify History Analyzer</h1>
           <div class="headerSection" id="selectButtonDiv">
-            <label class="button" for="upload">Select File</label>
+            <label class="button" for="upload">Select Files</label>
             <input id="upload" onchange="readFile(this)" type="file" multiple accept=".json">
           </div>
           <div class="headerSection" id="changeDateDiv">
-            <button class="button" style="margin:0" onclick="changeDate()">Change Date</button>
+            <p id="dateRangeText"></p>
+            <button class="button" style="margin:0" onclick="changeDate()">Change Dates</button>
           </div>
           <div class="headerSection" id="dateTypeDiv">
             <label for="dateType">Date range:</label>
@@ -66,12 +67,12 @@
 
         <!-- Explanations -->
         <div class="section" id="explanation1">
-          <h3>Select the <span style="color:rgb(30,215,96);">StreamingHistory_.json</span>  file from your Spotify data download.</h3>
+          <h3>Select the <span style="color:rgb(30,215,96);">StreamingHistory_.json</span> files from your Spotify data download.</h3>
           <h4>None of your data ever leaves your hands - everything's calculated directly on your device. Converts times to your local timezone.</h4>
         </div>
         <div class="section" id="explanation2">
           <h4>If you have not yet downloaded the file:</h4>
-          <h4 style="margin-left:0.8rem;line-height:1.8">1. Go to the Spotify website and log in.<br>2. Go to account settings<br><image style="height:5rem" src="images/accountSettings.png"></image><br>3. Go to privacy settings.<br><image style="height:2.3rem" src="images/privSettings.png"></image><br>4. Follow the steps near the bottom of the page to download your data. It usually takes around 2-4 days to arrive once you request it.<br><image id="dataDownloadImg" src="images/dataDownload.png"></image><br><br><br></h4>
+          <h4 style="margin-left:0.8rem;line-height:1.8">1. Go to the <a href="https://www.spotify.com/account/privacy/" target="_blank" rel="noopener noreferrer">Spotify Account Privacy website</a> and log in if necessary.<br>2. Follow the steps near the bottom of the website to download your data, making sure only <i>Account Data</i> is checked. It usually takes 2-5 days to arrive to your email.<br><image id="dataDownloadImg" src="images/dataDownload.png"></image><br>3. Once you receive the ZIP file, extract it.<br><br></h4>
           <h5 style="color:red">Internet Explorer and other outdated browsers are not supported.</h5>
         </div>
 

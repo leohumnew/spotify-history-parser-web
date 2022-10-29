@@ -1,6 +1,37 @@
-let fileReader = new FileReader();
-let contentArray = null;
+let contentArray = [];
 document.getElementById("fileResults").style.display = "none";
+
+// Get file input
+// Wrap filereader in promise
+const readUploadedFileAsText = (inputFile) => {
+    const temporaryFileReader = new FileReader();
+  
+    return new Promise((resolve, reject) => {
+      temporaryFileReader.onerror = () => {
+        temporaryFileReader.abort();
+        reject(temporaryFileReader.error);
+      };
+      temporaryFileReader.onload = () => {
+        resolve(temporaryFileReader.result);
+      };
+      temporaryFileReader.readAsText(inputFile);
+    });
+};
+// Loop over files calling readUploadedFileAsText promise for each one
+async function readFile(i) {
+    document.getElementById("selectButtonDiv").style.display = "none";
+
+    for (let j = 0; j < i.files.length; j++) {
+        try {
+            contentArray = contentArray.concat(Object.values(JSON.parse(await readUploadedFileAsText(i.files[j]))));
+        } catch (e) {
+            console.warn(e.message);
+            alert('Invalid file provided. Make sure to select your StreamingHistory_.json files only.');
+        }
+    }
+    console.log(contentArray[0]);
+    document.getElementById("dateTypeDiv").style.display = "revert";
+}
 
 // Set date
 function changeDate() {
@@ -8,31 +39,7 @@ function changeDate() {
     document.getElementById("dateType").value = "def";
     document.getElementById("dateTypeDiv").style.display = "revert";
 }
-// Get file input
-function readFile(i) {
-    document.getElementById("selectButtonDiv").style.display = "none";
-
-    fileReader.onerror = function() {
-        document.getElementById("selectButtonDiv").style.display = "revert";
-        file = null;
-        alert('Invalid file provided. Make sure to select your StreamingHistory_.json files only.');
-        return 1;
-    };
-    for (let j = 0; j < i.files.length; j++) {
-        fileReader.readAsText(i.files[j]);
-        fileReader.onload = function() {
-            try {
-                contentArray = JSON.parse(fileReader.result);
-            } catch (err) {
-                document.getElementById("selectButtonDiv").style.display = "revert";
-                alert('Invalid JSON provided. Make sure to select only your StreamingHistory_.json files.');
-                return 1;
-            }
-        };
-    }
-    
-    document.getElementById("dateTypeDiv").style.display = "revert";
-}
+// Choose date type: 0,0 if all time, -1,0 if past year, -2,0 if past two months, otherwise prepare for custom selection
 function chooseDateType(choice) {
     document.getElementById("dateTypeDiv").style.display = "none";
     if(choice == "allTime") analyzeFile(0,0);
@@ -66,6 +73,7 @@ var dateArrayTimes = [];
 var mostSeconds = 0;
 
 function analyzeFile(start, end) {
+    // Set HTML elements to const variables
     const songList = document.getElementById("songList");
     const listenTimeText = document.getElementById("listenTime");
     const timeDistributionChart = document.getElementById("timeDistribution");
@@ -73,6 +81,7 @@ function analyzeFile(start, end) {
     const dateDistributionChart = document.getElementById("dateDistribution");
     const hours = document.getElementById("hours");
 
+    // Make sure charts / lists are empty
     while(songList.firstChild) songList.removeChild(songList.firstChild);
     while(timeDistributionChart.firstChild) timeDistributionChart.removeChild(timeDistributionChart.firstChild);
     while(dateDistributionChart.firstChild) dateDistributionChart.removeChild(dateDistributionChart.firstChild);
@@ -80,6 +89,7 @@ function analyzeFile(start, end) {
     while(hours.firstChild) hours.removeChild(hours.firstChild);
     document.getElementById("noDataText").style.display = "none";
 
+    // Init variables
     let songArray = [];
     let sortedSongIndecesArray = [];
     let repetitionArray = [];
@@ -90,15 +100,16 @@ function analyzeFile(start, end) {
 
     let totalTime = 0;
     let timeDistribution = new Array(24).fill(0);
-    let months = ["0", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     loaded = false;
     dateArray = [];
     dateArrayTimes = [];
     mostSeconds = 0;
 
+    // Find start / end indeces
     let firstIndex = 0, lastIndex = contentArray.length;
-    if(end != 0) {
+    if(end != 0) { // If custom date range
         for (let i = 0; i < contentArray.length; i++){
             if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
                 firstIndex = i;
@@ -118,55 +129,62 @@ function analyzeFile(start, end) {
             document.getElementById("explanation2").style.display = "none";
             return 1;
         }
-    } else if (start == -1) {
+        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + end.toDateString();
+    } else if (start == -1) { // If past year
         start = new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10));
         start.setFullYear(start.getFullYear() - 1);
+        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + contentArray[contentArray.length - 1]["endTime"].substring(0,10);
 
         for (let i = 0; i < contentArray.length; i++){
             if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
                 firstIndex = i;
+                console.log(i);
                 break;
             }
         }
-    } else if (start == -2) {
+    } else if (start == -2) { // If past two months
         start = new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10));
         start.setDate(start.getDate() - 61);
+        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + contentArray[contentArray.length - 1]["endTime"].substring(0,10);
 
         for (let i = 0; i < contentArray.length; i++){
             if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
                 firstIndex = i;
+                console.log(i);
                 break;
             }
         }
+    } else {
+        document.getElementById("dateRangeText").innerHTML = new Date(contentArray[0]["endTime"].substring(0,10)).toDateString() + " - " + new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10)).toDateString();
     }
 
-    // Loop through all songs in file and save them to an object
+    // Loop through all songs in date range
     for (let i = firstIndex; i < lastIndex; i++) {
         let song = contentArray[i];
         let date = new Date(song["endTime"].substring(0,16)+" UTC").toLocaleString();
-        totalTime += song["msPlayed"];
-        timeDistribution[parseInt(date.substring(12,14))] += Math.round(song["msPlayed"]/1000);
+        totalTime += song["msPlayed"]; // Increment total time
+        timeDistribution[parseInt(date.substring(12,14))] += Math.round(song["msPlayed"]/1000); // Increment time for hourly time distribution graph
 
         if(dateArray.indexOf(date.substring(3,10)) === -1) {
             dateArray.push(date.substring(3,10));
             dateArrayTimes.push(0);
         }
-        dateArrayTimes[dateArray.indexOf(date.substring(3,10))] += Math.round(song["msPlayed"]/1000);
+        dateArrayTimes[dateArray.indexOf(date.substring(3,10))] += Math.round(song["msPlayed"]/1000); // Increment time for monthly time distribution graph
 
-        if (singerArray.indexOf(song["artistName"]) == -1) {
+        if (singerArray.indexOf(song["artistName"]) == -1) { // Add artist to artist array if not already there and initialize artist listen time to 0
             singerArray.push(song["artistName"]);
             singerTimeArray.push(0);
         }
 
-        if (songArray.indexOf(song["trackName"]) == -1) {
+        if (songArray.indexOf(song["trackName"]) == -1) { // Add song to song array if not already there, add artist link to singer indeces array, and initialize song repetitions to 0
             songArray.push(song["trackName"]);
             singerIndecesArray.push(singerArray.indexOf(song["artistName"]));
             repetitionArray.push(0);
         }
 
-        singerTimeArray[singerIndecesArray[songArray.indexOf(song["trackName"])]] += Math.round(song["msPlayed"]/1000);
+        singerTimeArray[singerIndecesArray[songArray.indexOf(song["trackName"])]] += Math.round(song["msPlayed"]/1000); // Add listen time to relevant artist
 
-        if (song["msPlayed"] > 2000) {
+        if (song["msPlayed"] > 2000) { // If song was played for more than 2 seconds, add repetition
             repetitionArray[songArray.indexOf(song["trackName"])] += 1;
         }
     }
@@ -229,7 +247,7 @@ function analyzeFile(start, end) {
         else if(dateArray.length < 13) dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))] + "</p>";
         else dateDistributionLabels.innerHTML += "<p>" + months[parseInt(dateArray[i].substring(0,2))].substring(0,1) + "</p>";
 
-        let pointHeight = dateArrayTimes[i] * dateDistributionChart.clientHeight / mostSeconds;
+        let pointHeight = (dateArrayTimes[i] * dateDistributionChart.clientHeight / mostSeconds) + 5;
         if (i < dateArray.length - 1) {
             let hyp = Math.sqrt(Math.pow(dateDistributionChart.clientWidth/dateArray.length, 2) + Math.pow((dateArrayTimes[i+1] - dateArrayTimes[i]) * dateDistributionChart.clientHeight / mostSeconds, 2));
             let deg = Math.asin(((dateArrayTimes[i] - dateArrayTimes[i+1]) * dateDistributionChart.clientHeight / mostSeconds) / hyp) * (180 / Math.PI);
@@ -244,34 +262,21 @@ function analyzeFile(start, end) {
 
 //Get Spotify credentials
 async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
-    // let response = await fetch("https://accounts.spotify.com/api/token", {
-    //     method: "POST",
-    //     headers: {
-    //         "Authorization": 'Basic NzlkYzdhM2FjYzFkNDg2YTk3MjYyNTBhMzBjMDgwYzY6OGU3ZGM5NDFkN2VkNDQ3ZmIyZGJkNTg5ZjcwZjEyNTU=', //Auth code
-    //         "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
-    //     },
-    //     body: "grant_type=client_credentials"
-    // });
-    // if(response.ok) {
-    //     let json = await response.json();
-    //     makeSearches(json.access_token, topSong, topSongArtist, topArtist);
-    // }
-
     fetch("getS.php", {
         method: 'POST'
     }).then(response => {
             if (response.status !== 200) {
-                console.log('Response not OK. Status Code: ' + response.status);
+                console.warn('Response not OK. Status Code: ' + response.status);
                 return;
             }
             response.text().then(async function(data) {
                 console.log(data);
                 makeSearches(data, topSong, topSongArtist, topArtist);
             }).catch(err => {
-                console.log('Credential parse Error: ', err);
+                console.warn('Credential parse Error: ', err);
             });
     }).catch(err => {
-        console.log('Error getting credential PHP with Fetch: ', err);
+        console.warn('Error getting credential PHP with Fetch: ', err);
     });
 }
 
@@ -413,7 +418,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         document.getElementsByClassName("wikidataDiv")[0].style.visibility = "visible";
         document.getElementsByClassName("wikidataDiv")[1].style.visibility = "visible";
     } catch(err) {
-        console.log("Error on Wikidata search: " + err);
+        console.warn("Error on Wikidata search: " + err);
     }
 }
 

@@ -118,12 +118,13 @@ li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
 }
 .lineChart {
     margin-right: 15px;
+    margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(var(--month-count), 1fr);
 }
 .point {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     margin-left: auto;
     margin-right: auto;
     border-radius:50%;
@@ -189,7 +190,7 @@ li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
 }
 .wikidataDiv {visibility: hidden;}
 #dataDownloadImg {
-    height:8rem;
+    height:18rem;
 }
 #dateTypeDiv, #dateRangeDiv, #startDateDiv, #endDateDiv, #changeDateDiv, #noDataText {
     display: none;
@@ -236,7 +237,7 @@ li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
         height: 8em;
     }
     #imageContainer {grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}
-    #dataDownloadImg {height:5rem;}
+    #dataDownloadImg {height:12rem}
 }
 
 /* Animation */
