@@ -2,52 +2,36 @@ let fileReader = new FileReader();
 let contentArray = null;
 document.getElementById("fileResults").style.display = "none";
 
-// function selectFolder() {
-//     let folder = dialog.showOpenDialogSync({
-//         properties: ['openDirectory']
-//     });
-//     if(folder != undefined) {
-//         document.getElementById("folderPath").innerHTML = folder[0];
-//         getFiles(folder[0]);
-//     }
-// }
-
-// // get all files in a folder
-// function getFiles(folder) {
-//     let files = fs.readdirSync(folder);
-//     let fileList = document.getElementById("fileList");
-//     fileList.innerHTML = "";
-//     for(let i = 0; i < files.length; i++) {
-//         fileList.innerHTML += "<li>" + files[i] + "</li>";
-//     }
-//     console.log(fileList);
-// }
-// selectFolder()
-
+// Set date
 function changeDate() {
     document.getElementById("changeDateDiv").style.display = "none";
     document.getElementById("dateType").value = "def";
     document.getElementById("dateTypeDiv").style.display = "revert";
 }
+// Get file input
 function readFile(i) {
-    let file = i.files[0];
-    fileReader.readAsText(file);
-    fileReader.onload = function() {
-        try {
-            document.getElementById("selectButtonDiv").style.display = "none";
-            contentArray = JSON.parse(fileReader.result);
-            document.getElementById("dateTypeDiv").style.display = "revert";
-        } catch (err) {
-            document.getElementById("selectButtonDiv").style.display = "revert";
-            file = null;
-            alert('Invalid JSON provided. Make sure to select your StreamingHistory_.json file.');
-        }
-    };
+    document.getElementById("selectButtonDiv").style.display = "none";
+
     fileReader.onerror = function() {
         document.getElementById("selectButtonDiv").style.display = "revert";
         file = null;
-        alert('Invalid file provided. Make sure to select your StreamingHistory_.json file.');
+        alert('Invalid file provided. Make sure to select your StreamingHistory_.json files only.');
+        return 1;
     };
+    for (let j = 0; j < i.files.length; j++) {
+        fileReader.readAsText(i.files[j]);
+        fileReader.onload = function() {
+            try {
+                contentArray = JSON.parse(fileReader.result);
+            } catch (err) {
+                document.getElementById("selectButtonDiv").style.display = "revert";
+                alert('Invalid JSON provided. Make sure to select only your StreamingHistory_.json files.');
+                return 1;
+            }
+        };
+    }
+    
+    document.getElementById("dateTypeDiv").style.display = "revert";
 }
 function chooseDateType(choice) {
     document.getElementById("dateTypeDiv").style.display = "none";
@@ -75,7 +59,7 @@ function setEndDate(choice) {
     analyzeFile(new Date(startDate.substring(0,10)), new Date(choice.substring(0,10)));
 }
 
-
+// Analyze data and display in graphs
 var loaded = false;
 var dateArray = [];
 var dateArrayTimes = [];
@@ -330,8 +314,8 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         document.getElementsByClassName("wikidataLoader")[0].style.visibility = "visible";
         document.getElementsByClassName("wikidataLoader")[1].style.visibility = "visible";
 
-        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "JP Saxe", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid", "Drake", "MIKA"];
-        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "JP Saxe", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)", "Drake (musician)", "Mika (singer)"];
+        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "Queen", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid", "Drake", "MIKA"];
+        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "Queen (band)", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)", "Drake (musician)", "Mika (singer)"];
         const alwaysLowercase = ["and", "at", "the", "of"];
 
         let queryString = "SELECT ?page ?birth ?locLabel WHERE{VALUES ?page{";
