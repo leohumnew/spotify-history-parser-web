@@ -29,7 +29,6 @@ async function readFile(i) {
             alert('Invalid file provided. Make sure to select your StreamingHistory_.json files only.');
         }
     }
-    console.log(contentArray[0]);
     document.getElementById("dateTypeDiv").style.display = "revert";
 }
 
@@ -161,11 +160,11 @@ function analyzeFile(start, end) {
     // Loop through all songs in date range
     for (let i = firstIndex; i < lastIndex; i++) {
         let song = contentArray[i];
-        let date = new Date(song["endTime"].substring(0,16)+" UTC").toLocaleString();
+        let date = new Date(song["endTime"].substring(0,16)).toLocaleString();
         totalTime += song["msPlayed"]; // Increment total time
         timeDistribution[parseInt(date.substring(12,14))] += Math.round(song["msPlayed"]/1000); // Increment time for hourly time distribution graph
 
-        if(dateArray.indexOf(date.substring(3,10)) === -1) {
+        if(dateArray.indexOf(date.substring(3,10)) === -1) { // If date is not in dateArray
             dateArray.push(date.substring(3,10));
             dateArrayTimes.push(0);
         }
@@ -229,7 +228,7 @@ function analyzeFile(start, end) {
 
     getSpotifyCredentials(songArray[sortedSongIndecesArray[0]], singerArray[singerIndecesArray[sortedSongIndecesArray[0]]], singerArray[sortedSingerIndecesArray[0]]);
 
-    getWikipediaInformation(singerArray[sortedSingerIndecesArray[0]], singerArray, sortedSingerIndecesArray);
+    getWikipediaInformation(singerArray, sortedSingerIndecesArray);
 
 
     document.getElementById("explanation1").style.display = "none";
@@ -307,7 +306,7 @@ async function makeSearches(t, topSong, topSongArtist, topArtist) {
     }
 }
 
-async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesArray) {
+async function getWikipediaInformation(singerArray, sortedSingerIndecesArray) {
     try {
         const countryList = document.getElementById("artistOriginList");
         const ageDistributionChart = document.getElementById("ageDistribution");
@@ -340,11 +339,7 @@ async function getWikipediaInformation(artist, singerArray, sortedSingerIndecesA
         }
         queryString += '}?sitelink schema:name ?page;schema:isPartOf <https://en.wikipedia.org/>;schema:about ?item.OPTIONAL{?item wdt:P27 ?loc.}OPTIONAL{?item wdt:P495 ?loc.}OPTIONAL{?item wdt:P569 ?birth.}OPTIONAL{?item wdt:P527 ?members. ?members wdt:P569 ?birth.}SERVICE wikibase:label{bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".}}';
         queryString = encodeURIComponent(queryString);
-        let response = await fetch("https://query.wikidata.org/sparql?query=" + queryString + "&format=json&origin=*", {
-            headers: {
-                'User-Agent': 'SpotifyHistoryAnalyzer/0.9' //Contact Info
-            }
-        });
+        let response = await fetch("https://query.wikidata.org/sparql?query=" + queryString + "&format=json&origin=*");
         let json = await response.json();
         let artistInfo = json.results.bindings;
         let countries = [];
