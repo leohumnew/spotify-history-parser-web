@@ -132,7 +132,7 @@ function analyzeFile(start, end) {
     } else if (start == -1) { // If past year
         start = new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10));
         start.setFullYear(start.getFullYear() - 1);
-        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + contentArray[contentArray.length - 1]["endTime"].substring(0,10);
+        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10)).toDateString();
 
         for (let i = 0; i < contentArray.length; i++){
             if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
@@ -144,7 +144,7 @@ function analyzeFile(start, end) {
     } else if (start == -2) { // If past two months
         start = new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10));
         start.setDate(start.getDate() - 61);
-        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + contentArray[contentArray.length - 1]["endTime"].substring(0,10);
+        document.getElementById("dateRangeText").innerHTML = start.toDateString() + " - " + new Date(contentArray[contentArray.length - 1]["endTime"].substring(0,10)).toDateString();
 
         for (let i = 0; i < contentArray.length; i++){
             if(new Date(contentArray[i]["endTime"].substring(0,10)) >= start) {
@@ -269,7 +269,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
                 return;
             }
             response.text().then(async function(data) {
-                console.log(data);
+                //console.log(data);
                 makeSearches(data, topSong, topSongArtist, topArtist);
             }).catch(err => {
                 console.warn('Credential parse Error: ', err);
@@ -291,6 +291,8 @@ async function makeSearches(t, topSong, topSongArtist, topArtist) {
         let json = await response.json();
         if(json.tracks.items[0] != null) document.getElementById("topSongImage").src = json.tracks.items[0].album.images[1].url;
         else document.getElementById("topSongImage").src = "images/def_song.png";
+    } else {
+        console.log("Error getting top song image: " + response.status);
     }
 
     let response2 = await fetch("https://api.spotify.com/v1/search?q=artist%3A" + encodeURIComponent(topArtist) + "&type=artist&limit=1", {
@@ -303,6 +305,8 @@ async function makeSearches(t, topSong, topSongArtist, topArtist) {
         let json = await response2.json();
         if(json.artists.items[0] != null) document.getElementById("topArtistImage").src = json.artists.items[0].images[1].url;
         else document.getElementById("topArtistImage").src = "images/def_singer.png";
+    } else {
+        console.log("Error getting top artist image: " + response2.status);
     }
 }
 
@@ -318,8 +322,8 @@ async function getWikipediaInformation(singerArray, sortedSingerIndecesArray) {
         document.getElementsByClassName("wikidataLoader")[0].style.visibility = "visible";
         document.getElementsByClassName("wikidataLoader")[1].style.visibility = "visible";
 
-        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "Queen", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid", "Drake", "MIKA"];
-        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "Queen (band)", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)", "Drake (musician)", "Mika (singer)"];
+        const errorCorrectionBefore = ["Alan Walker", "Sia", "MARINA", "Halsey", "Bastille", "P!nk", "BANNERS", "Céline Dion", "Queen", "Rutger Zuydervelt", "Sub Urban", "NF", "RADWIMPS", "Loreen", "Zayn", "Khaled", "AURORA", "Sam Ryder", "Sigrid", "Drake", "MIKA", "Ado"];
+        const errorCorrectionAfter = ["Alan Walker (music producer)", "Sia (musician)", "Marina Diamandis", "Halsey (singer)", "Bastille (band)", "Pink (singer)", "Banners (musician)", "Celine Dion", "Queen (band)", "Machinefabriek", "Sub Urban (musician)", "NF (rapper)", "Radwimps", "Loreen (singer)", "Zayn Malik", "Khaled (musician)", "Aurora (singer)", "Sam Ryder (singer)", "Sigrid (singer)", "Drake (musician)", "Mika (singer)", "Ado (singer)"];
         const alwaysLowercase = ["and", "at", "the", "of"];
 
         let queryString = "SELECT ?page ?birth ?locLabel WHERE{VALUES ?page{";

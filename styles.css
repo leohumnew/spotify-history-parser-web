@@ -1,6 +1,16 @@
+@font-face {
+    font-family: 'Montserrat Regular';
+    src: url(Montserrat-Regular.ttf) format('truetype');
+    font-display: swap;
+}
+
 body {
     max-width: 1920px;
     margin: 0 auto;
+    background-color: #000;
+    background-image: url("images/bg.png");
+    color: #ffffff;
+    font-family: "Montserrat Regular", Arial;
 }
 
 /* Font sizes */
@@ -33,7 +43,7 @@ h4 img {
 
 /* Header */
 #header {
-    padding-top:0.5rem;
+    padding-top:0.1rem;
     padding-bottom: 1rem;
     margin: 2rem;
     border-radius:5px;
@@ -45,27 +55,24 @@ h4 img {
     padding: 0.7rem 0rem;
     margin: 0rem 0.7rem;
     border-radius:5px;
-    animation-name: fadeUp;
-    animation-duration: 0.5s;
 }
-.headerSection:hover {
-    background-color: #262626;
-    transition: color 2s ease-in-out, background-color 0.15s ease-in-out;
-}
+
 /* Inputs */
 select, input[type="date"] {font-size:1.4em !important;}
 input[type="file"] {display: none;}
 .button {
-    padding: 0.4rem 0.6rem;
+    padding: 0.4rem 0.8rem;
     cursor: pointer;
     border-radius: 20px;
     border: none;
     background-color: rgb(30, 215, 96);
     font-size: 1.8em;
     color: #000;
+    transition: background-color 0.3s ease-in-out, padding 0.2s ease-in-out;
 }
 .button:hover {
     background-color: rgb(20, 190, 80);
+    padding: 0.4rem 0.65rem;
 }
 
 /* Body generic */
@@ -195,7 +202,7 @@ li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
 }
 .wikidataDiv {visibility: hidden;}
 #dataDownloadImg {
-    height:18rem;
+    height:20rem;
 }
 #dateTypeDiv, #dateRangeDiv, #startDateDiv, #endDateDiv, #changeDateDiv, #noDataText {
     display: none;
@@ -233,11 +240,7 @@ li:nth-of-type(odd) {background-color: rgb(48, 49, 48);}
         padding-bottom: 0.3rem;
         margin: 1.5rem 0.8rem;
     }
-    #topSongImage {
-        width: 8em;
-        height: 8em;
-    }
-    #topArtistImage {
+    #topSongImage, #topArtistImage {
         width: 8em;
         height: 8em;
     }

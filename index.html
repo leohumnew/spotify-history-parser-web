@@ -5,30 +5,17 @@
     <head>
       <title>Spotify History Analyzer</title>
       <meta name="title" content="Spotify History Analyzer">
+      <meta name="description" content="View unique stats and graphs all about your Spotify listen history!">
+      <meta name="author" content="Leo">
       <meta charset="utf-8">
       <link rel="canonical" href="https://leohumnew.com/spotify/">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="description" content="Free Spotify history parser">
-      <meta name="author" content="Leo">
       <meta name="color-scheme" content="dark">
 
-      <style>
-        @font-face {
-          font-family: 'Montserrat Regular';
-          src: url(Montserrat-Regular.ttf) format('truetype');
-          font-display: swap;
-        }
-        body {
-          background-color: #000;
-          background-image: url("images/bg.png");
-          color: #ffffff;
-          font-family: "Montserrat Regular", Arial;
-        }
-      </style>
       <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <!-- Header -->
+        <!-- Header Menu -->
         <div id="header" class="center">
           <h1>Spotify History Analyzer</h1>
           <div class="headerSection" id="selectButtonDiv">
@@ -43,7 +30,7 @@
             <label for="dateType">Date range:</label>
             <select id="dateType" autocomplete="off" onchange="chooseDateType(this.value)">
               <option value="def" disabled selected>---</option>
-              <option value="allTime">All Time</option>
+              <!--<option value="allTime">All Time</option>-->
               <option value="pastYear">Past Year</option>
               <option value="past2Months">Past 2 Months</option>
               <option value="custom">Custom</option>
@@ -72,7 +59,7 @@
         </div>
         <div class="section" id="explanation2">
           <h4>If you have not yet downloaded the file:</h4>
-          <h4 style="margin-left:0.8rem;line-height:1.8">1. Go to the <a href="https://www.spotify.com/account/privacy/" target="_blank" rel="noopener noreferrer">Spotify Account Privacy website</a> and log in if necessary.<br>2. Follow the steps near the bottom of the website to download your data, making sure only <i>Account Data</i> is checked. It usually takes 2-5 days to arrive to your email.<br><image id="dataDownloadImg" src="images/dataDownload.png"></image><br>3. Once you receive the ZIP file, extract it.<br><br></h4>
+          <h4 style="margin-left:0.8rem;line-height:1.8">1. Go to the <a href="https://www.spotify.com/account/privacy/" target="_blank" rel="noopener noreferrer">Spotify Account Privacy website</a> and log in if necessary.<br>2. Follow the steps near the bottom of the website to download your data, making sure only <i>Account Data</i> is checked. It usually takes 2-5 days to arrive to your email.<br><img id="dataDownloadImg" src="images/dataDownload.png"></img><br>3. Once you receive the ZIP file, extract it.<br><br></h4>
           <h5 style="color:red">Internet Explorer and other outdated browsers are not supported.</h5>
         </div>
 
@@ -84,12 +71,12 @@
             <div id="imageContainer">
               <div class="itemBox">
                 <h3>Top Song</h3>
-                <image id="topSongImage" src="images/def_song.png"></image>
+                <img id="topSongImage" src="images/def_song.png" alt="" />
                 <h3 id="topSong"></h3>
               </div>
               <div class="itemBox">
                 <h3>Top Artist</h3>
-                <image id="topArtistImage" src="images/def_singer.png"></image>
+                <img id="topArtistImage" src="images/def_singer.png" alt="" />
                 <h3 id="topArtist"></h3>
               </div>
             </div>
@@ -149,11 +136,11 @@
           <h5><a href="https://leohumnew.com" style="color:rgb(30,215,96)">Home - About Me</a></h5>
           <div class="attribution">
             <h5>Track covers by</h5>
-            <image src="images/spotifyLogo.png"></image>
+            <img src="images/spotifyLogo.png"></img>
           </div>
           <div class="attribution">
             <h5>Artist information</h5>
-            <image src="images/wikidataLogo.png"></image>
+            <img src="images/wikidataLogo.png"></img>
           </div>
         </div>
 
