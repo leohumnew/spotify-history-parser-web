@@ -224,9 +224,8 @@ function analyzeFile(start, end) {
 
     // Overview
     document.getElementById("topSong").innerHTML = songArray[sortedSongIndecesArray[0]] + "<br><span style='font-size:0.75em'>Played " + repetitionArray[sortedSongIndecesArray[0]] + " times</span>";
-    document.getElementById("topArtist").innerHTML = singerArray[sortedSingerIndecesArray[0]] + "<br><span style='font-size:0.75em'>Listened to for " + Math.round(singerTimeArray[sortedSingerIndecesArray[0]]/60) + " minutes</span>";
 
-    getSpotifyCredentials(songArray[sortedSongIndecesArray[0]], singerArray[singerIndecesArray[sortedSongIndecesArray[0]]], singerArray[sortedSingerIndecesArray[0]]);
+    getSpotifyCredentials(songArray[sortedSongIndecesArray[0]], singerArray[singerIndecesArray[sortedSongIndecesArray[0]]], singerArray, sortedSingerIndecesArray, singerTimeArray); // singerArray[sortedSingerIndecesArray[0]]
 
     getWikipediaInformation(singerArray, sortedSingerIndecesArray);
 
@@ -260,7 +259,7 @@ function analyzeFile(start, end) {
 }
 
 //Get Spotify credentials
-async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
+async function getSpotifyCredentials(topSong, topSongArtist, allArtists, orderedArtists, singerTimeArray) {
     fetch("getS.php", {
         method: 'POST'
     }).then(response => {
@@ -270,7 +269,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
             }
             response.text().then(async function(data) {
                 //console.log(data);
-                makeSearches(data, topSong, topSongArtist, topArtist);
+                makeSearches(data, topSong, topSongArtist, allArtists, orderedArtists, singerTimeArray);
             }).catch(err => {
                 console.warn('Credential parse Error: ', err);
             });
@@ -280,7 +279,7 @@ async function getSpotifyCredentials(topSong, topSongArtist, topArtist) {
 }
 
 // Search spotify images
-async function makeSearches(t, topSong, topSongArtist, topArtist) {
+async function makeSearches(t, topSong, topSongArtist, allArtists, orderedArtists, singerTimeArray) {
     let response = await fetch("https://api.spotify.com/v1/search?q=track%3A"+ encodeURIComponent(topSong) +"+artist%3A"+ encodeURIComponent(topSongArtist) +"&type=track&limit=1", {
         headers: {
             "Authorization": 'Bearer ' + t,
@@ -295,18 +294,27 @@ async function makeSearches(t, topSong, topSongArtist, topArtist) {
         console.log("Error getting top song image: " + response.status);
     }
 
-    let response2 = await fetch("https://api.spotify.com/v1/search?q=artist%3A" + encodeURIComponent(topArtist) + "&type=artist&limit=1", {
-        headers: {
-            "Authorization": 'Bearer ' + t,
-            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+    let i = 0;
+    while(true) {
+        let response2 = await fetch("https://api.spotify.com/v1/search?q=artist%3A" + encodeURIComponent(allArtists[orderedArtists[i]]) + "&type=artist&limit=1", {
+            headers: {
+                "Authorization": 'Bearer ' + t,
+                "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
+            }
+        });
+        if(response2.ok) {
+            let json = await response2.json();
+            if(json.artists.items[0] != null) {
+                document.getElementById("topArtistImage").src = json.artists.items[0].images[1].url;
+                document.getElementById("topArtist").innerHTML = allArtists[orderedArtists[i]] + "<br><span style='font-size:0.75em'>Listened to for " + Math.round(singerTimeArray[orderedArtists[i]]/60) + " minutes</span>";
+                break;
+            }
+            else document.getElementById("topArtistImage").src = "images/def_singer.png";
+        } else {
+            console.log("Error getting top artist image: " + response2.status);
+            break;
         }
-    });
-    if(response2.ok) {
-        let json = await response2.json();
-        if(json.artists.items[0] != null) document.getElementById("topArtistImage").src = json.artists.items[0].images[1].url;
-        else document.getElementById("topArtistImage").src = "images/def_singer.png";
-    } else {
-        console.log("Error getting top artist image: " + response2.status);
+        i++;
     }
 }
 
